@@ -6,6 +6,22 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+### Añadido
+- Backend con Django, Django REST Framework y PostgreSQL en `backend/` (backend)
+- Modelos `Session` y `Solve` con ids generados en el cliente, borrado lógico y fecha de última modificación (backend)
+- API de sincronización: `POST /api/sync/` sube cambios en lote de forma idempotente y `GET /api/sync/?since=` devuelve los cambios desde una fecha, borrados incluidos (backend)
+- Autenticación por token (`POST /api/auth/token/`) y datos separados por usuario (backend)
+- Endpoint `GET /api/health/` para que el cliente compruebe si el servidor está al alcance (backend)
+- Panel de administración de Django para revisar los datos (backend)
+- Pruebas automáticas de la API (15), verificadas con SQLite y con PostgreSQL 16 (backend)
+- Docker Compose con PostgreSQL 16 y el backend, con volumen persistente para los datos y puerto local de PostgreSQL configurable, 5433 por defecto (docker).
+- Archivo `.env.example` con la configuración del entorno (docker)
+- README raíz con instrucciones del backend y de la API (docs)
+
+### Cambiado
+- El frontend pasa a vivir en `frontend/` (refactor)
+- `.gitignore` ampliado con archivos de Python (build)
+
 ## [0.1.0] - 2026-10-21
 
 ### Añadido
