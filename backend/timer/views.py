@@ -10,8 +10,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Session, Solve
-from .serializers import SessionSerializer, SolveSerializer
+from .models import Attempt, Session, Solve
+from .serializers import AttemptSerializer, SessionSerializer, SolveSerializer
 
 
 @api_view(['GET'])
@@ -53,7 +53,7 @@ class SyncView(APIView):
         Devuelve lo creado, modificado o borrado desde `since` (todo, si se omite).
         Guarda `server_time` de la respuesta y úsalo como `since` en la próxima.
 
-    POST /api/sync/   {"sessions": [...], "solves": [...]}
+    POST /api/sync/   {"sessions": [...], "solves": [...], "attempts": [...]}
         Sube cambios en lote. Gana la última escritura en llegar al servidor.
     """
 
@@ -63,6 +63,7 @@ class SyncView(APIView):
         server_time = timezone.now()  # se toma antes de consultar, para no perder cambios
         sessions = Session.objects.filter(user=request.user)
         solves = Solve.objects.filter(user=request.user)
+        attempts = Attempt.objects.filter(user=request.user)
 
         raw = request.query_params.get('since')
         if raw:
@@ -73,12 +74,14 @@ class SyncView(APIView):
                 since = since.replace(tzinfo=dt_timezone.utc)
             sessions = sessions.filter(updated_at__gt=since)
             solves = solves.filter(updated_at__gt=since)
+            attempts = attempts.filter(updated_at__gt=since)
 
         return Response(
             {
                 'server_time': server_time,
                 'sessions': SessionSerializer(sessions, many=True).data,
                 'solves': SolveSerializer(solves, many=True).data,
+                'attempts': AttemptSerializer(attempts, many=True).data,
             }
         )
 
@@ -99,10 +102,17 @@ class SyncView(APIView):
         solves.is_valid(raise_exception=True)
         _upsert(Solve, request.user, solves.validated_data)
 
+        attempts = AttemptSerializer(
+            data=_as_list(request.data.get('attempts'), 'attempts'), many=True, context=context
+        )
+        attempts.is_valid(raise_exception=True)
+        _upsert(Attempt, request.user, attempts.validated_data)
+
         return Response(
             {
                 'server_time': timezone.now(),
                 'sessions': len(sessions.validated_data),
                 'solves': len(solves.validated_data),
+                'attempts': len(attempts.validated_data),
             }
         )

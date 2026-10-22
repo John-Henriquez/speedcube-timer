@@ -66,3 +66,51 @@ class Solve(models.Model):
 
     def __str__(self):
         return f'{self.puzzle} {self.time_ms} ms ({self.penalty or "ok"})'
+
+
+class Attempt(models.Model):
+    """Intento de una zona de entrenamiento (Cross, F2L, OLL, PLL...)."""
+
+    class Mode(models.TextChoices):
+        EXECUTION = 'ejecucion', 'Ejecución'
+        KNOWLEDGE = 'conocimiento', 'Conocimiento'
+
+    class Capture(models.TextChoices):
+        MANUAL = 'manual', 'Manual'
+        ASSISTED = 'asistido', 'Asistido'
+        AUTOMATIC = 'automatico', 'Automático'
+
+    class Validation(models.TextChoices):
+        VALID = 'valida', 'Válida'
+        INVALID = 'invalida', 'Inválida'
+        UNVERIFIED = 'sin_verificar', 'Sin verificar'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='attempts')
+    # La zona no tiene `choices`: así se pueden añadir zonas nuevas sin migración.
+    zone = models.CharField(max_length=40)
+    case_id = models.CharField(max_length=60, null=True, blank=True)
+    mode = models.CharField(max_length=20, choices=Mode.choices, default=Mode.EXECUTION)
+    scramble = models.TextField(blank=True, default='')
+    time_ms = models.PositiveIntegerField(null=True, blank=True, validators=[MaxValueValidator(MAX_TIME_MS)])
+    recognition_ms = models.PositiveIntegerField(null=True, blank=True, validators=[MaxValueValidator(MAX_TIME_MS)])
+    capture = models.CharField(max_length=20, choices=Capture.choices, default=Capture.MANUAL)
+    validation = models.CharField(max_length=20, choices=Validation.choices, default=Validation.UNVERIFIED)
+    moves = models.JSONField(null=True, blank=True)  # solo si se registraron de verdad
+    stage_marks = models.JSONField(null=True, blank=True)
+    notes = models.TextField(blank=True, default='')
+    protocol_version = models.PositiveSmallIntegerField(default=1)
+    attempted_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)  # borrado lógico
+
+    class Meta:
+        ordering = ['attempted_at']
+        indexes = [
+            models.Index(fields=['user', 'updated_at']),
+            models.Index(fields=['user', 'zone', 'attempted_at']),
+        ]
+
+    def __str__(self):
+        return f'{self.zone} {self.case_id or ""} {self.time_ms} ms'
