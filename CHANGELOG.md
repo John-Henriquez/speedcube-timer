@@ -6,6 +6,18 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+## [0.2.0] - 2026-10-22
+
+### Añadido
+- Modelo `Attempt` en el backend y soporte de `attempts` en la API de sincronización (backend)
+- Persistencia local de intentos de entrenamiento y hook `useAttempts` (storage)
+- Borrado lógico y marca `updatedAt` en el almacenamiento local, y `getChanges` para sincronizar solo lo modificado (storage)
+- Pruebas de la capa de almacenamiento, incluida la migración de la v1 a la v2 (storage)
+
+### Cambiado
+- IndexedDB pasa a la versión 2, con tiendas `attempts` y `meta` (storage)
+- Borrar resoluciones ahora es un borrado lógico (storage)
+
 ### Añadido
 - Backend con Django, Django REST Framework y PostgreSQL en `backend/` (backend)
 - Modelos `Session` y `Solve` con ids generados en el cliente, borrado lógico y fecha de última modificación (backend)
