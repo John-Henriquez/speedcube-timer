@@ -53,10 +53,16 @@ export function useSolves() {
     storage.deleteSolve(id);
   }, []);
 
+  const removeMany = useCallback((ids) => {
+    const set = new Set(ids);
+    setSolves((prev) => prev.filter((s) => !set.has(s.id)));
+    ids.forEach((id) => storage.deleteSolve(id));
+  }, []);
+
   const clear = useCallback(() => {
     setSolves([]);
     storage.clearSolves();
   }, []);
 
-  return { solves, loaded, reload, add, togglePenalty, remove, clear };
+  return { solves, loaded, reload, add, togglePenalty, remove, removeMany, clear };
 }

@@ -66,7 +66,7 @@ button {
 }
 
 /* Con el timer corriendo se oculta todo lo demás. */
-.app[data-phase='running'] .chrome {
+.app:has(.timer[data-tone='running']) .chrome {
   opacity: 0;
   pointer-events: none;
 }

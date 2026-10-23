@@ -1,10 +1,10 @@
 import { formatSolve } from '../core/format.js';
 
-export default function SessionList({ solves, decimals, onPenalty, onDelete, onClear }) {
+export default function SessionList({ solves, decimals, onPenalty, onDelete, onClear, title = 'Sesión', clearLabel = 'Borrar sesión' }) {
   const rows = [...solves].reverse();
 
   const confirmClear = () => {
-    if (window.confirm('¿Borrar todos los tiempos de la sesión? Esta acción no se puede deshacer.')) {
+    if (window.confirm('¿Borrar todos los tiempos de esta lista? Esta acción no se puede deshacer.')) {
       onClear();
     }
   };
@@ -12,10 +12,10 @@ export default function SessionList({ solves, decimals, onPenalty, onDelete, onC
   return (
     <section className="panel">
       <div className="panel__head">
-        <h2>Sesión</h2>
+        <h2>{title}</h2>
         {solves.length > 0 && (
           <button type="button" className="btn btn--quiet" onClick={confirmClear}>
-            Borrar sesión
+            {clearLabel}
           </button>
         )}
       </div>

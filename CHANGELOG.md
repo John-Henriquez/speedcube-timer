@@ -6,6 +6,18 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+## [0.5.0] - 2026-10-23
+
+### Añadido
+- Navegación por secciones (Timer, Calendario) (ui)
+- Calendario mensual: cada día es una sesión, con intensidad según la meta, resumen del mes y detalle del día (ui)
+- Meta diaria de resoluciones con barra de progreso y porcentaje, configurable en los ajustes (ui)
+- Lógica de días y calendario en hora local, con pruebas en varias zonas horarias (core)
+
+### Cambiado
+- El timer trabaja con la sesión de hoy: estadísticas, lista y "Borrar hoy" solo afectan al día (ui)
+- Los controles del cronómetro pasan a un hook compartido (hooks)
+
 ## [0.4.0] - 2026-10-22
 
 ### Añadido

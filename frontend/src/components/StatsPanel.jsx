@@ -1,6 +1,6 @@
 import { formatStat } from '../core/format.js';
 
-export default function StatsPanel({ stats, decimals }) {
+export default function StatsPanel({ stats, decimals, title = 'Estadísticas' }) {
   const rows = [
     ['Tiempos', stats.count],
     ['Mejor', formatStat(stats.best, decimals)],
@@ -13,7 +13,7 @@ export default function StatsPanel({ stats, decimals }) {
 
   return (
     <section className="panel">
-      <h2>Estadísticas</h2>
+      <h2>{title}</h2>
       <dl className="stats">
         {rows.map(([label, value]) => (
           <div className="stats__row" key={label}>
