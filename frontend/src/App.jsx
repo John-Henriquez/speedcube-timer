@@ -7,6 +7,7 @@ import { useTimer } from './hooks/useTimer.js';
 import { useSolves } from './hooks/useSolves.js';
 import { useSettings } from './hooks/useSettings.js';
 import { useSync } from './hooks/useSync.js';
+import CubeView from './components/CubeView.jsx';
 import ScrambleView from './components/ScrambleView.jsx';
 import TimerDisplay from './components/TimerDisplay.jsx';
 import StatsPanel from './components/StatsPanel.jsx';
@@ -120,6 +121,7 @@ export default function App() {
       </header>
 
       <ScrambleView scramble={scramble} onNew={newScramble} />
+      {settings.showCube && <CubeView scramble={scramble} />}
 
       <TimerDisplay
         tone={display.tone}

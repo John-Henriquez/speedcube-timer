@@ -6,6 +6,12 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+### Añadido
+- Vista del cubo mezclado: isométrica y desarrollo plano de las seis caras (ui)
+- Conversión del modelo de piezas a pegatinas por cara y geometría de dibujo (core)
+- Opción para mostrar u ocultar el cubo en los ajustes (ui)
+- Pruebas físicas de los seis giros y de que OLL y PLL se ven correctos en la cara superior (core)
+
 ## [0.3.0] - 2026-10-22
 ### Añadido
 - Cliente de sincronización: sube lo modificado y baja lo nuevo, con reintento seguro y sin pisar ediciones locales recientes (sync)

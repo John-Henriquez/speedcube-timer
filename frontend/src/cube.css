@@ -1,0 +1,29 @@
+.cube-view {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.cube-view__drawings {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.cube-view__iso {
+  width: 150px;
+  height: auto;
+}
+.cube-view__net {
+  width: 240px;
+  height: auto;
+}
+.cube-view figcaption {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+@media (max-width: 720px) {
+  .cube-view__iso { width: 120px; }
+  .cube-view__net { width: 200px; }
+}

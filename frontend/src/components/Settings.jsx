@@ -9,6 +9,14 @@ export default function Settings({ settings, onChange }) {
       >
         Inspección de 15 s
       </button>
+      <button
+        type="button"
+        className="chip"
+        aria-pressed={settings.showCube}
+        onClick={() => onChange({ showCube: !settings.showCube })}
+      >
+        Mostrar cubo
+      </button>
       <div className="seg" role="group" aria-label="Decimales">
         {[2, 3].map((d) => (
           <button

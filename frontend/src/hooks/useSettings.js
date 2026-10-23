@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 const KEY = 'speedcube-timer:settings';
-const DEFAULTS = { inspection: false, decimals: 2 };
+const DEFAULTS = { inspection: false, decimals: 2, showCube: true };
 
 function load() {
   try {
