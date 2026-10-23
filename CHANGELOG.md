@@ -6,6 +6,7 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-10-22
 ### Añadido
 - Cliente de sincronización: sube lo modificado y baja lo nuevo, con reintento seguro y sin pisar ediciones locales recientes (sync)
 - Panel de sincronización en la interfaz, con conexión por usuario y contraseña y sincronización automática (ui)
