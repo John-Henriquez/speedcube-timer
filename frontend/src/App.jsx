@@ -7,10 +7,12 @@ import NavTabs from './components/NavTabs.jsx';
 import SyncPanel from './components/SyncPanel.jsx';
 import CalendarPage from './pages/CalendarPage.jsx';
 import TimerPage from './pages/TimerPage.jsx';
+import TrainingPage from './pages/TrainingPage.jsx';
 
 const SECTIONS = [
   { id: 'timer', label: 'Timer' },
   { id: 'calendar', label: 'Calendario' },
+  { id: 'training', label: 'Entrenamiento' },
 ];
 
 export default function App() {
@@ -30,6 +32,10 @@ export default function App() {
       )}
       {section === 'calendar' && (
         <CalendarPage settings={settings} solvesApi={solvesApi} attemptsApi={attemptsApi} />
+      )}
+
+      {section === 'training' && (
+        <TrainingPage settings={settings} attemptsApi={attemptsApi} busyRef={busyRef} />
       )}
 
       <footer className="chrome footer">

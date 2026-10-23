@@ -6,6 +6,15 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+## [0.6.0] - 2026-10-23
+
+### Añadido
+- Sección Entrenamiento con las cinco zonas, práctica con mezcla y cubo, y apariencia propia (ui)
+- Modalidades de ejecución y conocimiento en OLL y PLL, con elección de caso (ui)
+- Estadísticas por zona y por caso con aviso de datos insuficientes (ui)
+- Confirmación manual del resultado de cada intento, distinguida de la medición del timer (ui)
+- Pruebas de las estadísticas por zona y por caso (training)
+
 ## [0.5.0] - 2026-10-23
 
 ### Añadido
