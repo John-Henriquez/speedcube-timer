@@ -6,6 +6,8 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-10-22
+
 ### Añadido
 - Vista del cubo mezclado: isométrica y desarrollo plano de las seis caras (ui)
 - Conversión del modelo de piezas a pegatinas por cara y geometría de dibujo (core)
