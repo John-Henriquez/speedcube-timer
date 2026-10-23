@@ -101,6 +101,31 @@ export async function getChanges(since = null) {
   return { solves: await pick(STORES.SOLVES), attempts: await pick(STORES.ATTEMPTS) };
 }
 
+/** Marca de "ya sincronizado": un registro bajado del servidor no cuenta como cambio local. */
+const SYNCED = '1970-01-01T00:00:00.000Z';
+
+/**
+ * Guarda registros que llegan del servidor sin volver a sellarlos con la hora actual
+ * (si no, se subirían de nuevo). Si el usuario modificó un registro localmente después de
+ * `protectAfter` (es decir, durante la sincronización), se conserva su versión.
+ */
+export async function applyRemote({ solves = [], attempts = [] }, { protectAfter = null } = {}) {
+  const apply = (storeName, records) =>
+    records.length === 0
+      ? null
+      : run(storeName, 'readwrite', (store) => {
+          for (const record of records) {
+            store.get(record.id).onsuccess = (e) => {
+              const existing = e.target.result;
+              if (existing && protectAfter && (existing.updatedAt ?? '') > protectAfter) return;
+              store.put({ ...record, updatedAt: SYNCED });
+            };
+          }
+        });
+  await apply(STORES.SOLVES, solves);
+  await apply(STORES.ATTEMPTS, attempts);
+}
+
 export async function getMeta(key) {
   const row = await run(STORES.META, 'readonly', (s) => s.get(key));
   return row ? row.value : null;

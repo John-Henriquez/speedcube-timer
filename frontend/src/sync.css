@@ -1,0 +1,53 @@
+.sync {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: left;
+  max-width: 560px;
+  margin: 0 auto 10px;
+}
+.sync summary {
+  cursor: pointer;
+  list-style-position: inside;
+}
+.sync__status {
+  margin-left: 8px;
+  color: var(--text);
+}
+.sync__status[data-status='offline'] {
+  color: var(--sticker-orange);
+}
+.sync__status[data-status='error'],
+.sync__status[data-status='unauthorized'] {
+  color: var(--sticker-red);
+}
+.sync__status[data-status='ok'] {
+  color: var(--sticker-green);
+}
+.sync__form {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.sync__form label {
+  display: grid;
+  gap: 4px;
+}
+.sync__form input {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+.sync__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.sync__error {
+  margin: 0;
+  color: var(--sticker-red);
+}

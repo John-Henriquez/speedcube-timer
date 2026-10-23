@@ -27,5 +27,6 @@ export const saveAttempt = (attempt) => safe('saveAttempt', () => local.saveAtte
 export const deleteAttempt = (id) => safe('deleteAttempt', () => local.deleteAttempt(id));
 
 export const getChanges = (since) => safe('getChanges', () => local.getChanges(since), { solves: [], attempts: [] });
+export const applyRemote = (records, options) => safe('applyRemote', () => local.applyRemote(records, options));
 export const getMeta = (key) => safe('getMeta', () => local.getMeta(key), null);
 export const setMeta = (key, value) => safe('setMeta', () => local.setMeta(key, value));

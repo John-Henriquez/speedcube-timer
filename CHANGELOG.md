@@ -6,6 +6,16 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+### Añadido
+- Cliente de sincronización: sube lo modificado y baja lo nuevo, con reintento seguro y sin pisar ediciones locales recientes (sync)
+- Panel de sincronización en la interfaz, con conexión por usuario y contraseña y sincronización automática (ui)
+- Traducción entre el formato local y el de la API para resoluciones e intentos (sync)
+- Pruebas del cliente con un servidor simulado, incluidos los casos sin conexión, sesión caducada y edición concurrente (sync)
+
+### Cambiado
+- Los hooks de resoluciones e intentos se recargan solos cuando una sincronización trae datos nuevos (hooks)
+- El almacenamiento local distingue los registros bajados del servidor de los cambios locales pendientes (storage)
+
 ## [0.2.0] - 2026-10-22
 
 ### Añadido

@@ -6,11 +6,13 @@ import { summarize } from './core/stats.js';
 import { useTimer } from './hooks/useTimer.js';
 import { useSolves } from './hooks/useSolves.js';
 import { useSettings } from './hooks/useSettings.js';
+import { useSync } from './hooks/useSync.js';
 import ScrambleView from './components/ScrambleView.jsx';
 import TimerDisplay from './components/TimerDisplay.jsx';
 import StatsPanel from './components/StatsPanel.jsx';
 import SessionList from './components/SessionList.jsx';
 import Settings from './components/Settings.jsx';
+import SyncPanel from './components/SyncPanel.jsx';
 
 const PUZZLE = '3x3';
 
@@ -46,6 +48,7 @@ export default function App() {
 
   const timer = useTimer({ inspection: settings.inspection, onFinish: handleFinish });
   const { press, release, cancel, getPhase } = timer;
+  const sync = useSync({ shouldSkip: () => getPhase() === PHASE.RUNNING });
 
   // Teclado: Espacio inicia (mantener y soltar); cualquier tecla detiene; Esc cancela.
   useEffect(() => {
@@ -136,7 +139,10 @@ export default function App() {
         />
       </div>
 
-      <footer className="chrome footer">v{__APP_VERSION__}</footer>
+      <footer className="chrome footer">
+        <SyncPanel sync={sync} />
+        <div>v{__APP_VERSION__}</div>
+      </footer>
     </div>
   );
 }

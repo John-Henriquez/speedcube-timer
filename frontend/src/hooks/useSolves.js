@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as storage from '../storage/index.js';
+import { SYNCED_EVENT } from '../sync/events.js';
 
 function newId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -12,17 +13,18 @@ export function useSolves() {
   const solvesRef = useRef(solves);
   solvesRef.current = solves;
 
-  useEffect(() => {
-    let alive = true;
-    storage.getSolves().then((list) => {
-      if (!alive) return;
-      setSolves(list);
-      setLoaded(true);
-    });
-    return () => {
-      alive = false;
-    };
+  const reload = useCallback(async () => {
+    const list = await storage.getSolves();
+    setSolves(list);
+    setLoaded(true);
   }, []);
+
+  // Carga inicial y recarga cuando una sincronización trae datos nuevos.
+  useEffect(() => {
+    reload();
+    window.addEventListener(SYNCED_EVENT, reload);
+    return () => window.removeEventListener(SYNCED_EVENT, reload);
+  }, [reload]);
 
   const add = useCallback((data) => {
     const solve = {
@@ -56,5 +58,5 @@ export function useSolves() {
     storage.clearSolves();
   }, []);
 
-  return { solves, loaded, add, togglePenalty, remove, clear };
+  return { solves, loaded, reload, add, togglePenalty, remove, clear };
 }
