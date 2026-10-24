@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAttempts } from './hooks/useAttempts.js';
 import { useSettings } from './hooks/useSettings.js';
 import { useSolves } from './hooks/useSolves.js';
@@ -20,7 +20,10 @@ export default function App() {
   const { settings, update: updateSettings } = useSettings();
   const solvesApi = useSolves();
   const attemptsApi = useAttempts();
-  const busyRef = useRef(false); // true mientras algún timer corre: no se sincroniza en ese momento
+  useEffect(() => {
+    document.documentElement.dataset.theme = section === 'training' ? 'training' : 'timer';
+  }, [section]);
+  const busyRef = useRef(false); 
   const sync = useSync({ shouldSkip: () => busyRef.current });
 
   return (

@@ -6,6 +6,23 @@ y versionado según [SemVer](https://semver.org/lang/es/).
 
 ## [Sin publicar]
 
+[Sin publicar] por ## [0.7.0] - 2026-10-24
+
+### Añadido
+- Tema retro 8-bit con tipografía pixel art: Silkscreen en las etiquetas, Press Start 2P en los dígitos del timer y VT323 en el texto (ui)
+- Paleta generada desde un único tono: azul en timer y calendario y su opuesto exacto, naranja, en el entrenamiento (ui)
+- Barra de meta por segmentos, como una barra de vida (ui)
+- Fuentes incluidas en la app, sin depender de internet (ui)
+
+### Cambiado
+- Timer despejado: meta, mezcla y cronómetro a la vista; ajustes tras un botón y sesión de hoy plegada con un resumen de una línea (ui)
+- "Mostrar cubo" pasa a ser el botón "Cubo", junto a la mezcla, apagado por defecto (ui)
+- Con el timer corriendo se ocultan también los botones de la mezcla (ui)
+- Cubo, calendario, entrenamiento y sincronización unificados con el nuevo tema (ui)
+
+### Eliminado
+- Enlaces a Google Fonts (ui)
+
 ## [0.6.0] - 2026-10-23
 
 ### Añadido

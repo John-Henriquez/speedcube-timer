@@ -1,5 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import '@fontsource/press-start-2p';
+import '@fontsource/silkscreen/700.css';
+import '@fontsource/vt323';
 import App from './App.jsx';
 import './styles.css';
 import './sync.css';

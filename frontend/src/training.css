@@ -1,30 +1,15 @@
-/* La zona de entrenamiento tiene su propia paleta para que se note que es otro espacio. */
-.app[data-section='training'] {
-  --surface: #14213a;
-  --line: #243a5e;
-  --muted: #8da2c4;
-  --accent: #4cc9f0;
-}
-body:has(.app[data-section='training']) {
-  background: #0c1424;
-}
-.app[data-section='training'] .nav {
-  background: #14213a;
-}
-.app[data-section='training'] .nav__tab[aria-current='page'] {
-  background: var(--accent);
-  color: #04131b;
-}
+/* Zona de entrenamiento: solo distribución y componentes propios.
+   Los colores vienen del tema (--hue: 25 en esta zona), idénticos en forma al timer. */
 
 .training__banner {
-  padding: 16px 18px;
-  background: linear-gradient(100deg, #14304f 0%, #14213a 70%);
-  border-left: 5px solid var(--accent);
-  border-radius: 4px 14px 14px 4px;
+  padding: 16px 18px 18px;
+  background: var(--surface);
+  border: 3px solid var(--accent);
+  box-shadow: 6px 6px 0 var(--shadow);
 }
 .training__banner h1 {
-  font-size: 1.7rem;
-  margin: 2px 0 4px;
+  margin: 4px 0 6px;
+  font-size: 20px;
 }
 .training__banner p {
   margin: 0;
@@ -32,84 +17,82 @@ body:has(.app[data-section='training']) {
 }
 .training__banner .training__kicker {
   color: var(--accent);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--font-pixel);
+  font-size: 11px;
   text-transform: uppercase;
 }
 
 .training__layout {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 20px;
   align-items: start;
 }
 .training__main {
   display: grid;
-  gap: 16px;
+  gap: 18px;
   min-width: 0;
 }
-
-.training .panel {
-  border-radius: 4px 4px 12px 12px;
-  border-top: 3px solid var(--accent);
-}
-
 /* Lista de zonas */
 .zone-nav {
   display: grid;
-  gap: 6px;
+  gap: 10px;
 }
 .zone-nav__item {
   display: grid;
-  grid-template-columns: 1.8rem 1fr auto;
+  grid-template-columns: 2rem 1fr auto;
   align-items: center;
   gap: 10px;
+  padding: 8px 10px;
   text-align: left;
-  padding: 9px 10px;
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 4px 12px 12px 4px;
   color: var(--muted);
+  border: 3px solid var(--line);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--shadow);
 }
 .zone-nav__item:hover {
   color: var(--text);
+  border-color: var(--accent);
 }
 .zone-nav__item[aria-current='true'] {
   color: var(--text);
   border-color: var(--accent);
-  box-shadow: inset 4px 0 0 var(--accent);
+  background: var(--surface-2);
 }
 .zone-nav__index {
   display: grid;
   place-items: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  border-radius: 4px;
+  width: 2rem;
+  height: 2rem;
   background: var(--line);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  font-family: var(--font-pixel);
+  font-size: 12px;
 }
 .zone-nav__item[aria-current='true'] .zone-nav__index {
   background: var(--accent);
-  color: #04131b;
+  color: var(--accent-ink);
+}
+.zone-nav__name {
+  font-size: 1.2rem;
+  line-height: 1.1;
 }
 .zone-nav__count {
-  font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
 
 /* Información de la zona */
 .zone-info summary {
   cursor: pointer;
-  font-weight: 600;
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  text-transform: uppercase;
 }
 .zone-info__body h3 {
-  margin: 14px 0 4px;
-  font-size: 0.85rem;
+  margin: 16px 0 4px;
+  font-size: 11px;
   color: var(--accent);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 .zone-info__body p,
 .zone-info__body ol,
@@ -118,113 +101,104 @@ body:has(.app[data-section='training']) {
 }
 .zone-info__body ol,
 .zone-info__body ul {
-  padding-left: 1.2rem;
+  padding-left: 1.3rem;
 }
 
 /* Práctica */
 .practice {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 .practice__controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 .practice__controls label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: var(--muted);
-}
-.practice__controls select {
-  font: inherit;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 6px 10px;
 }
 .practice__challenge {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 .practice__meta {
   margin: 0;
   color: var(--muted);
 }
 .training .timer {
-  min-height: 26vh;
+  min-height: 28vh;
 }
 .training .timer__time {
-  font-size: clamp(4rem, 14vw, 9rem);
+  font-size: clamp(2rem, 8vw, 4.2rem);
 }
 .practice__answer {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 .practice__answer .btn {
   flex: 1 1 200px;
-  padding: 18px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  padding: 22px 14px;
+  font-size: 13px;
 }
 .practice__yes {
-  border-color: var(--sticker-green);
+  border-color: var(--ok);
 }
 .practice__no {
-  border-color: var(--sticker-red);
+  border-color: var(--bad);
 }
 .practice__last {
   display: flex;
   align-items: center;
-  gap: 4px 6px;
+  gap: 4px 8px;
   flex-wrap: wrap;
 }
 .practice__confirm {
   display: inline-flex;
-  gap: 6px;
-  margin-left: 6px;
+  gap: 8px;
+  margin-left: 8px;
+}
+.practice__last details {
+  flex-basis: 100%;
 }
 .practice__last code {
   display: block;
   margin-top: 6px;
-  font-size: 1rem;
-}
-.practice__last details {
-  flex-basis: 100%;
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
 }
 
 /* Estadísticas de la zona */
 .stat-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
   margin-top: 10px;
 }
 .stat-card {
   display: grid;
-  gap: 2px;
+  gap: 4px;
   padding: 10px 12px;
-  background: #0f1b31;
-  border: 1px solid var(--line);
-  border-radius: 4px 10px 10px 4px;
+  background: var(--bg);
+  border: 3px solid var(--line);
 }
 .stat-card__label {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 1.05rem;
 }
 .stat-card__value {
-  font-size: 1.35rem;
-  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .zone-stats__note {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 1.05rem;
 }
 .case-table-wrap {
   margin-top: 14px;
@@ -237,9 +211,9 @@ body:has(.app[data-section='training']) {
 }
 .case-table th,
 .case-table td {
-  padding: 7px 10px;
+  padding: 6px 10px;
   text-align: right;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
 }
 .case-table th:first-child,
 .case-table td:first-child {
@@ -247,15 +221,17 @@ body:has(.app[data-section='training']) {
 }
 .case-table th {
   color: var(--muted);
-  font-weight: 500;
-  font-size: 0.85rem;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 10px;
+  text-transform: uppercase;
 }
 .case-table tr[data-practiced='false'] td {
   color: var(--muted);
 }
 .case-table__family {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin-left: 6px;
 }
 
@@ -265,8 +241,8 @@ body:has(.app[data-section='training']) {
   }
   .zone-nav {
     grid-auto-flow: column;
-    grid-auto-columns: minmax(150px, 1fr);
+    grid-auto-columns: minmax(170px, 1fr);
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 8px;
   }
 }

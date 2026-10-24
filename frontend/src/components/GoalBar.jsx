@@ -1,13 +1,11 @@
+const SEGMENTS = 20;
+
 export default function GoalBar({ label, progress, className = '' }) {
   const { count, goal, percent, fill, reached } = progress;
+  const on = count > 0 ? Math.max(1, Math.floor(fill * SEGMENTS)) : 0;
   return (
     <div className={`goal ${className}`} data-reached={reached}>
-      <div className="goal__head">
-        <span>{label}</span>
-        <span className="goal__numbers">
-          {count} / {goal} · {percent}%{reached ? ' ✓' : ''}
-        </span>
-      </div>
+      <span className="goal__label">{label}</span>
       <div
         className="goal__track"
         role="progressbar"
@@ -16,8 +14,13 @@ export default function GoalBar({ label, progress, className = '' }) {
         aria-valuemax={goal}
         aria-valuenow={Math.min(count, goal)}
       >
-        <div className="goal__fill" style={{ width: `${fill * 100}%` }} />
+        {Array.from({ length: SEGMENTS }, (_, i) => (
+          <span key={i} className="goal__seg" data-on={i < on} />
+        ))}
       </div>
+      <span className="goal__numbers">
+        {count}/{goal} · {percent}%{reached ? ' ✓' : ''}
+      </span>
     </div>
   );
 }

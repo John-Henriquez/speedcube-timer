@@ -5,18 +5,13 @@ import { FACE_COLORS, ISO_VIEWBOX, NET_VIEWBOX, isoPolygons, netCells } from '..
 
 const box = (v) => `${v.x} ${v.y} ${v.width} ${v.height}`;
 
-/**
- * Dibuja el cubo resultante de aplicar `scramble` a un cubo resuelto (o el `state` dado):
- * vista isométrica y desarrollo plano con las seis caras.
- * Orientación estándar: blanco arriba, verde al frente.
- */
 export default function CubeView({ scramble = '', state = null }) {
   const view = useMemo(() => {
     try {
       const grid = toFacelets(state ?? applyAlgorithm(solvedState(), scramble));
       return { iso: isoPolygons(grid), net: netCells(grid) };
     } catch {
-      return null; // mezcla con un movimiento no reconocido: no se dibuja nada
+      return null; 
     }
   }, [scramble, state]);
 
@@ -32,7 +27,7 @@ export default function CubeView({ scramble = '', state = null }) {
         </svg>
         <svg className="cube-view__net" viewBox={box(NET_VIEWBOX)} role="img" aria-label="Desarrollo plano con las seis caras">
           {view.net.map((c) => (
-            <rect key={`${c.x}-${c.y}`} x={c.x + 0.04} y={c.y + 0.04} width="0.92" height="0.92" rx="0.1" fill={FACE_COLORS[c.color]} />
+            <rect key={`${c.x}-${c.y}`} x={c.x + 0.04} y={c.y + 0.04} width="0.92" height="0.92" fill={FACE_COLORS[c.color]} />
           ))}
         </svg>
       </div>
