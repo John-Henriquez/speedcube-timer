@@ -4,7 +4,10 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
-## [Sin publicar]
+### Añadido
+- Los intentos de entrenamiento guardan una copia del algoritmo usado, para que cambiar después el recomendado no altere el historial (training)
+- Campos `algorithm_id` y `algorithm_notation` en el modelo `Attempt` del backend, con la migración `0003`, y su traducción en la sincronización (backend)
+- Pruebas del backend y de la sincronización para el algoritmo usado (backend)
 
 [Sin publicar] por ## [0.7.0] - 2026-10-24
 

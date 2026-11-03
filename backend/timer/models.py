@@ -92,6 +92,9 @@ class Attempt(models.Model):
     case_id = models.CharField(max_length=60, null=True, blank=True)
     mode = models.CharField(max_length=20, choices=Mode.choices, default=Mode.EXECUTION)
     scramble = models.TextField(blank=True, default='')
+    # Algoritmo usado, copiado tal cual: cambiar después el recomendado del catálogo no altera el historial.
+    algorithm_id = models.CharField(max_length=80, null=True, blank=True)
+    algorithm_notation = models.TextField(blank=True, default='')
     time_ms = models.PositiveIntegerField(null=True, blank=True, validators=[MaxValueValidator(MAX_TIME_MS)])
     recognition_ms = models.PositiveIntegerField(null=True, blank=True, validators=[MaxValueValidator(MAX_TIME_MS)])
     capture = models.CharField(max_length=20, choices=Capture.choices, default=Capture.MANUAL)

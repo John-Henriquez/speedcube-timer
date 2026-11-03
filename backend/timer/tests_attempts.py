@@ -11,6 +11,8 @@ def attempt_payload(**overrides):
         'case_id': 'oll-sune',
         'mode': 'ejecucion',
         'scramble': "R U2 R' U' R U' R'",
+        'algorithm_id': None,
+        'algorithm_notation': '',
         'time_ms': 1840,
         'recognition_ms': None,
         'capture': 'manual',
@@ -74,3 +76,24 @@ class AttemptSyncTests(ApiTestCase):
 
     def test_el_envio_sin_intentos_sigue_funcionando(self):
         self.assertEqual(self.push(solves=[]).status_code, 200)
+
+class AttemptAlgorithmTests(ApiTestCase):
+    def test_guarda_el_algoritmo_usado_tal_cual(self):
+        attempt = attempt_payload(zone='oll', case_id='oll-27', algorithm_id='oll-27#1', algorithm_notation="R U R' U R U2 R'")
+        self.push(attempts=[attempt])
+        row = Attempt.objects.get(pk=attempt['id'])
+        self.assertEqual(row.algorithm_id, 'oll-27#1')
+        self.assertEqual(row.algorithm_notation, "R U R' U R U2 R'")
+        data = self.client.get('/api/sync/').json()['attempts'][0]
+        self.assertEqual(data['algorithm_notation'], "R U R' U R U2 R'")
+
+    def test_el_algoritmo_es_opcional(self):
+        self.assertEqual(self.push(attempts=[attempt_payload()]).status_code, 200)
+        self.assertIsNone(Attempt.objects.get().algorithm_id)
+
+    def test_reenviar_el_intento_no_cambia_el_algoritmo_guardado(self):
+        attempt = attempt_payload(algorithm_id='pll-ua#2', algorithm_notation="M2 U M U2 M' U M2")
+        self.push(attempts=[attempt])
+        attempt['validation'] = 'invalida'  # se edita el estado; el algoritmo viaja igual
+        self.push(attempts=[attempt])
+        self.assertEqual(Attempt.objects.get().algorithm_notation, "M2 U M U2 M' U M2")

@@ -44,7 +44,7 @@ class AttemptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attempt
         fields = [
-            'id', 'zone', 'case_id', 'mode', 'scramble', 'time_ms', 'recognition_ms',
+            'id', 'zone', 'case_id', 'mode', 'scramble', 'algorithm_id', 'algorithm_notation', 'time_ms', 'recognition_ms',
             'capture', 'validation', 'moves', 'stage_marks', 'notes', 'protocol_version',
             'attempted_at', 'created_at', 'updated_at', 'deleted_at',
         ]
