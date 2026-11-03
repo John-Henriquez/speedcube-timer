@@ -1,14 +1,18 @@
 import { formatStat } from '../../core/format.js';
-import { OLL_CASES, PLL_CASES } from '../../training/cases.js';
+import { casesForZone } from '../../training/cases.js';
+import { coverageStats } from '../../training/coverage.js';
+import { STATUS_LABEL, statusOf } from '../../training/selection.js';
 import { caseRows, zoneSummary } from '../../training/zoneStats.js';
 
-const CASES = { oll: OLL_CASES, pll: PLL_CASES };
 const pct = (v) => (v == null ? '—' : `${Math.round(v * 100)}%`);
 
-export default function ZoneStats({ zone, attempts, decimals }) {
+export default function ZoneStats({ zone, attempts, progress = {}, decimals }) {
   const { execution: s, knowledge } = zoneSummary(attempts, zone.id);
-  const cases = CASES[zone.id];
-  const rows = cases ? caseRows(attempts, zone.id, cases) : [];
+  const cases = casesForZone(zone.id);
+  const cover = cases ? coverageStats(cases, attempts, progress) : null;
+  const rows = cases
+    ? caseRows(attempts, zone.id, cases)
+    : [];
   const cards = [
     ['Intentos', s.attempts],
     ['Mejor', formatStat(s.best, decimals)],
@@ -44,16 +48,38 @@ export default function ZoneStats({ zone, attempts, decimals }) {
         </>
       )}
 
+      {cover && (
+        <>
+          <h3 className="zone-stats__sub">Cobertura</h3>
+          <div className="stat-cards">
+            {[
+              ['En el catálogo', cover.total],
+              ['Verificados', cover.verified],
+              ['Por validar', cover.pendingValidation],
+              ['Practicados', cover.practiced],
+              ['Sin intentos', cover.unpracticed],
+              ['Sin aprender', cover.pendingLearning],
+            ].map(([label, value]) => (
+              <div className="stat-card" key={label}>
+                <span className="stat-card__label">{label}</span>
+                <span className="stat-card__value">{value}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       {cases && (
         <div className="case-table-wrap">
           <table className="case-table">
             <thead>
-              <tr><th>Caso</th><th>Intentos</th><th>Mejor</th><th>Mediana</th><th>Errores</th><th>Conocimiento</th></tr>
+              <tr><th>Caso</th><th>Aprendizaje</th><th>Intentos</th><th>Mejor</th><th>Mediana</th><th>Errores</th><th>Conocimiento</th></tr>
             </thead>
             <tbody>
               {rows.map(({ case: c, stats, knowledge: k }) => (
                 <tr key={c.id} data-practiced={stats.attempts > 0 || k.total > 0}>
                   <td>{c.name} <span className="case-table__family">{c.family}</span></td>
+                  <td>{STATUS_LABEL[statusOf(progress, c.id)]}</td>
                   <td>{stats.attempts}{stats.attempts > 0 && !stats.sufficient ? '*' : ''}</td>
                   <td>{formatStat(stats.best, decimals)}</td>
                   <td>{formatStat(stats.median, decimals)}</td>

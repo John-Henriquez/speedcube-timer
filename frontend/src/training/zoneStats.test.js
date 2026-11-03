@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MODE, VALIDATION, createAttempt } from './attempts.js';
-import { OLL_CASES } from './cases.js';
+import { casesForZone } from './cases.js';
 import { caseRows, countByZone, zoneSummary } from './zoneStats.js';
 
 const exec = (caseId, timeMs, validation = VALIDATION.VALID, zone = 'oll') =>
@@ -10,9 +10,9 @@ const know = (caseId, validation) =>
   createAttempt({ zone: 'oll', caseId, mode: MODE.KNOWLEDGE, scramble: 'R', timeMs: null, validation });
 
 const attempts = [
-  exec('oll-sune', 1800), exec('oll-sune', 2000), exec('oll-sune', 2200, VALIDATION.INVALID),
-  exec('oll-pi', 3100, VALIDATION.UNVERIFIED),
-  know('oll-sune', VALIDATION.VALID), know('oll-sune', VALIDATION.INVALID), know('oll-pi', VALIDATION.UNVERIFIED),
+  exec('oll-27', 1800), exec('oll-27', 2000), exec('oll-27', 2200, VALIDATION.INVALID),
+  exec('oll-22', 3100, VALIDATION.UNVERIFIED),
+  know('oll-27', VALIDATION.VALID), know('oll-27', VALIDATION.INVALID), know('oll-22', VALIDATION.UNVERIFIED),
   exec('pll-ua', 2500, VALIDATION.VALID, 'pll'),
 ];
 
@@ -27,21 +27,21 @@ test('zoneSummary separa ejecución de conocimiento y no mezcla zonas', () => {
 });
 
 test('caseRows lista todos los casos, practicados o no', () => {
-  const rows = caseRows(attempts, 'oll', OLL_CASES);
-  assert.equal(rows.length, OLL_CASES.length);
-  const sune = rows.find((r) => r.case.id === 'oll-sune');
+  const rows = caseRows(attempts, 'oll', casesForZone('oll'));
+  assert.equal(rows.length, casesForZone('oll').length);
+  const sune = rows.find((r) => r.case.id === 'oll-27');
   assert.equal(sune.stats.attempts, 3);
   assert.equal(sune.stats.best, 1800);
   assert.equal(sune.stats.invalid, 1);
   assert.deepEqual(sune.knowledge, { total: 2, known: 1 });
-  const untouched = rows.find((r) => r.case.id === 'oll-h');
+  const untouched = rows.find((r) => r.case.id === 'oll-21');
   assert.equal(untouched.stats.attempts, 0);
   assert.equal(untouched.stats.best, null);
   assert.deepEqual(untouched.knowledge, { total: 0, known: 0 });
 });
 
 test('un conocimiento sin verificar no cuenta como "sabido"', () => {
-  const pi = caseRows(attempts, 'oll', OLL_CASES).find((r) => r.case.id === 'oll-pi');
+  const pi = caseRows(attempts, 'oll', casesForZone('oll')).find((r) => r.case.id === 'oll-22');
   assert.deepEqual(pi.knowledge, { total: 1, known: 0 });
   assert.equal(pi.stats.unverified, 1);
 });

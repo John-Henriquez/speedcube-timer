@@ -5,6 +5,7 @@ import { FACES, toFacelets } from './facelets.js';
 import { isoPolygons, netCells } from './geometry.js';
 import { generateOll, generatePll } from '../../training/generators.js';
 import { generate3x3 } from '../scramble/3x3.js';
+import { toFaceTurns } from './notation.js';
 
 const S = solvedState();
 const row = (g, face, r) => g[face][r];
@@ -90,7 +91,8 @@ test('un cubo mezclado conserva 9 pegatinas de cada color y los centros fijos', 
 test('un OLL ya orientado se ve con la cara de arriba de un solo color', () => {
   for (let n = 0; n < 40; n++) {
     const g = generateOll();
-    const solved = applyAlgorithm(applyAlgorithm(S, g.scramble), `${g.auf ? (g.auf.endsWith("'") ? g.auf.slice(0, -1) : g.auf.endsWith('2') ? g.auf : `${g.auf}'`) : ''} ${g.alg}`);
+    const undo = g.auf ? (g.auf.endsWith("'") ? g.auf.slice(0, -1) : g.auf.endsWith('2') ? g.auf : `${g.auf}'`) : '';
+    const solved = applyAlgorithm(applyAlgorithm(S, g.scramble), toFaceTurns(`${undo} ${g.alg}`));
     assert.ok(uniform(toFacelets(solved), 'U', 'U'), g.caseId);
     // y el caso sin resolver NO tiene la cara de arriba uniforme
     assert.ok(!uniform(toFacelets(applyAlgorithm(S, g.scramble)), 'U', 'U'), `${g.caseId} sin resolver`);

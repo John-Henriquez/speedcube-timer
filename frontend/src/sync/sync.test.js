@@ -137,9 +137,9 @@ test('una edición hecha durante la sincronización no se pisa con la copia del 
 });
 
 test('traducción: ida y vuelta sin perder datos', () => {
-  const a = createAttempt({ zone: 'pll', caseId: 'pll-ua', scramble: 'R', timeMs: 2100, recognitionMs: 400, validation: 'valida', capture: 'asistido', notes: 'x' });
+  const a = createAttempt({ zone: 'pll', caseId: 'pll-ua', scramble: 'R', timeMs: 2100, recognitionMs: 400, validation: 'valida', capture: 'asistido', notes: 'x', algorithm: { id: 'pll-ua#2', notation: "M2 U M U2 M' U M2" } });
   const back = attemptFromServer({ ...attemptToServer(a), updated_at: 'ignorado' });
-  for (const k of ['id', 'zone', 'caseId', 'mode', 'timeMs', 'recognitionMs', 'capture', 'validation', 'moves', 'stageMarks', 'notes', 'date']) {
+  for (const k of ['id', 'zone', 'caseId', 'mode', 'algorithm', 'timeMs', 'recognitionMs', 'capture', 'validation', 'moves', 'stageMarks', 'notes', 'date']) {
     assert.deepEqual(back[k], a[k], k);
   }
   const solve = { id: 's', time: 8000, penalty: null, scramble: '', date: '2026-10-22T10:00:00.000Z', puzzle: '3x3' };

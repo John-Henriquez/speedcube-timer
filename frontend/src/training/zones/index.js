@@ -1,6 +1,7 @@
 import {
   applyAlgorithm, crossAndFirstPairSolved, crossSolved, f2lSolved, llOriented, solvedState, solvedUpToAuf,
 } from '../../core/cube/cube.js';
+import { toFaceTurns } from '../../core/cube/notation.js';
 import { generateCross, generateCrossPair, generateF2L, generateOll, generatePll } from '../generators.js';
 
 /**
@@ -85,7 +86,8 @@ export function validateSolution(zoneId, scramble, solution, options = {}) {
   const zone = getZone(zoneId);
   let state;
   try {
-    state = applyAlgorithm(applyAlgorithm(solvedState(), scramble), solution);
+    // La solución puede usar anchos, capas y rotaciones: se pasa a giros de cara (equivalentes).
+    state = applyAlgorithm(applyAlgorithm(solvedState(), toFaceTurns(scramble)), toFaceTurns(solution));
   } catch {
     return { valid: false, reason: 'La solución contiene un movimiento no reconocido.' };
   }

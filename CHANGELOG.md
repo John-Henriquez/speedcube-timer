@@ -4,6 +4,30 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
+## [0.9.0] - 2026-11-02
+### Añadido
+- Simulador geométrico del cubo con toda la notación (giros, anchos, capas y rotaciones) y analizador de notación, contrastado con el modelo de piezas anterior (core)
+- Conversión de cualquier algoritmo a giros de cara equivalentes, comprobada con 600 secuencias aleatorias (core)
+- Catálogo CFOP como única fuente de datos: 57 OLL y 21 PLL, con 159 algoritmos verificados de tres fuentes y el estado de verificación calculado por el simulador (catalog)
+- Categorías de OLL por aristas (Dot 8, Mini L 27, Line 15, Cross 7), de PLL por tipo de permutación, y familias visuales de OLL, todas calculadas y comprobadas (catalog)
+- Comprobación de completitud: los 57 OLL cubren los 216 estados de orientación y los 21 PLL las 288 permutaciones (catalog)
+- Almanaque CFOP con pestañas OLL y PLL, diagramas de última capa, filtros, búsqueda, cobertura y ficha de cada caso (ui)
+- Estados de aprendizaje por caso y variantes personales, que solo se guardan si el simulador confirma que resuelven ese caso (ui)
+- Entrenamiento de los 57 OLL y 21 PLL con filtros por categoría y estado de aprendizaje, modo cobertura y elección de algoritmo (training)
+- Panel post-it con los últimos intentos del caso actual, de 5 en 5, con DNF, restaurar y borrar (training)
+- Estadísticas de cobertura calculadas con los registros reales (training)
+
+### Cambiado
+- Los casos del entrenamiento salen del catálogo central en vez de una lista propia de 12 (training)
+- Los intentos hechos con los identificadores antiguos pasan solos a los casos estándar, sin perder tiempos ni historial (training)
+- Las mezclas de OLL y PLL se generan como giros de cara equivalentes al algoritmo (training)
+- La tabla de estadísticas de OLL y PLL lista todos los casos, practicados o no (ui)
+- El almanaque y el entrenamiento usan un ancho de página mayor (ui)
+
+### Corregido
+- Se sustituyen los nombres propios de la primera versión del entrenador (como "Línea" y "L") por los números estándar de OLL (training)
+
+## [0.8.0] - 2026-11-02
 ### Añadido
 - Los intentos de entrenamiento guardan una copia del algoritmo usado, para que cambiar después el recomendado no altere el historial (training)
 - Campos `algorithm_id` y `algorithm_notation` en el modelo `Attempt` del backend, con la migración `0003`, y su traducción en la sincronización (backend)

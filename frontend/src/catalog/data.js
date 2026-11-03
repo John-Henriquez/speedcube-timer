@@ -1,0 +1,100 @@
+/**
+ * Datos de origen del catálogo CFOP: tal como los publican las fuentes, SIN correcciones manuales.
+ * Que un algoritmo sea correcto o discrepe lo decide la verificación (analysis.js), no este archivo.
+ *
+ * Fuentes (consultadas el 2026-10-24):
+ *   speedcubing.org    -> /pages/full-oll y /pages/full-pll
+ *   speedcubebattle.com -> /oll
+ *   speedcube.quest    -> /algorithms/3x3/pll (los más usados por cada caso)
+ */
+export const SOURCES = {
+  ORG: 'speedcubing.org',
+  BATTLE: 'speedcubebattle.com',
+  QUEST: 'speedcube.quest',
+};
+
+// OLL: [número, familia visual, probabilidad publicada por speedcubing.org, algoritmo de speedcubing.org, algoritmo de speedcubebattle.com]
+export const OLL_ROWS = [
+  [1, 'Dot', '1/108', "R U2 R2 F R F' U2 R' F R F'", "R U2 R2 F R F' U2 R' F R F'"],
+  [2, 'Dot', '1/54', "F R U R' U' F' f R U R' U' f'", "r U r' U2 r U2 R' U2 R U' r'"],
+  [3, 'Dot', '1/54', "f R U R' U' f' U' F R U R' U' F'", "r' R2 U R' U r U2 r' U M'"],
+  [4, 'Dot', '1/54', "f R U R' U' f' U F R U R' U' F'", "M U' r U2 r' U' R U' R' M'"],
+  [5, 'Square', '1/54', "r' U2 R U R' U r", "l' U2 L U L' U l"],
+  [6, 'Square', '1/54', "r U2 R' U' R U' r'", "r U2 R' U' R U' r'"],
+  [7, 'Lightning', '1/54', "r U R' U R U2 r'", "r U R' U R U2 r'"],
+  [8, 'Lightning', '1/54', "r' U' R U' R' U2 r", "l' U' L U' L' U2 l"],
+  [9, 'Fish', '1/54', "R U R' U' R' F R2 U R' U' F'", "R U R' U' R' F R2 U R' U' F'"],
+  [10, 'Fish', '1/54', "R U R' U R' F R F' R U2 R'", "R U R' U R' F R F' R U2 R'"],
+  [11, 'Lightning', '1/54', "r' R2 U R' U R U2 R' U M'", "r U R' U R' F R F' R U2 r'"],
+  [12, 'Lightning', '1/54', "M' R' U' R U' R' U2 R U' M", "M' R' U' R U' R' U2 R U' R r'"],
+  [13, 'Knight Move', '1/54', "r U' r' U' r U r' y' R' U R", "F U R U' R2 F' R U R U' R'"],
+  [14, 'Knight Move', '1/54', "R' F R U R' F' R F U' F'", "R' F R U R' F' R F U' F'"],
+  [15, 'Knight Move', '1/54', "r' U' r R' U' R U r' U r", "l' U' l L' U' L U l' U l"],
+  [16, 'Knight Move', '1/54', "r U r' R U R' U' r U' r'", "r U r' R U R' U' r U' r'"],
+  [17, 'Dot', '1/54', "R U R' U R' F R F' U2 R' F R F'", "F R' F' R2 r' U R U' R' U' M'"],
+  [18, 'Dot', '1/54', "R U2 R2 F R F' U2 M' U R U' r'", "r U R' U R U2 r2 U' R U' R' U2 r"],
+  [19, 'Dot', '1/54', "M U R U R' U' M' R' F R F'", "r' R U R U R' U' M' R' F R F'"],
+  [20, 'Dot', '1/216', "M U R U R' U' M2 U R U' r'", "r U R' U' M2 U R U' R' U' M'"],
+  [21, 'OCLL', '1/108', "R U2 R' U' R U R' U' R U' R'", "R U2 R' U' R U R' U' R U' R'"],
+  [22, 'OCLL', '1/54', "R U2 R2' U' R2 U' R2' U2 R", "R U2 R2 U' R2 U' R2 U2 R"],
+  [23, 'OCLL', '1/54', "R2 D R' U2 R D' R' U2 R'", "R2 D' R U2 R' D R U2 R"],
+  [24, 'OCLL', '1/54', "r U R' U' r' F R F'", "r U R' U' r' F R F'"],
+  [25, 'OCLL', '1/54', "F' r U R' U' r' F R", "F' r U R' U' r' F R"],
+  [26, 'OCLL', '1/54', "R U2 R' U' R U' R'", "R U2 R' U' R U' R'"],
+  [27, 'OCLL', '1/54', "R U R' U R U2 R'", "R U R' U R U2 R'"],
+  [28, 'Corners oriented', '1/54', "r U R' U' M U R U' R'", "r U R' U' r' R U R U' R'"],
+  [29, 'Awkward', '1/54', "R U2' R2' F R F' R U' R' U R U2' R'", "R U R' U' R U' R' F' U' F R U R'"],
+  [30, 'Awkward', '1/54', "F U R U2 R' U' R U2 R' U' F'", "F R' F R2 U' R' U' R U R' F2"],
+  [31, 'P', '1/54', "R' U' F U R U' R' F' R", "R' U' F U R U' R' F' R"],
+  [32, 'P', '1/54', "S R U R' U' R' F R f'", "L U F' U' L' U L F L'"],
+  [33, 'T', '1/54', "R U R' U' R' F R F'", "R U R' U' R' F R F'"],
+  [34, 'C', '1/54', "R U R2 U' R' F R U R U' F'", "R U R2 U' R' F R U R U' F'"],
+  [35, 'Fish', '1/54', "R U2' R2' F R F' R U2' R'", "R U2 R2 F R F' R U2 R'"],
+  [36, 'W', '1/54', "R' U' R U' R' U R U l U' R' U x", "L' U' L U' L' U L U L F' L' F"],
+  [37, 'Fish', '1/54', "F R U' R' U' R U R' F'", "F R' F' R U R U' R'"],
+  [38, 'W', '1/54', "R U R' U R U' R' U' R' F R F'", "R U R' U R U' R' U' R' F R F'"],
+  [39, 'Big Lightning', '1/54', "L F' L' U' L U F U' L'", "L F' L' U' L U F U' L'"],
+  [40, 'Big Lightning', '1/54', "R' F R U R' U' F' U R", "R' F R U R' U' F' U R"],
+  [41, 'Awkward', '1/54', "R U R' U R U2 R' F R U R' U' F'", "R U R' U R U2 R' F R U R' U' F'"],
+  [42, 'Awkward', '1/54', "R' U' R U' R' U2 R F R U R' U' F'", "R' U' R U' R' U2 R F R U R' U' F'"],
+  [43, 'P', '1/54', "F U' L' U L F'", "F' U' L' U L F"],
+  [44, 'P', '1/54', "F R U R' U' F'", "F U R U' R' F'"],
+  [45, 'T', '1/54', "F R U R' U' F'", "F R U R' U' F'"],
+  [46, 'C', '1/54', "R' U' R' F R F' U R", "R' U' R' F R F' U R"],
+  [47, 'Small L', '1/54', "F' L' U' L U L' U' L U F", "R' U' R' F R F' R' F R F' U R"],
+  [48, 'Small L', '1/54', "F R U R' U' R U R' U' F'", "F R U R' U' R U R' U' F'"],
+  [49, 'Small L', '1/54', "r U' r2 U r2 U r2 U' r", "r U' r2 U r2 U r2 U' r"],
+  [50, 'Small L', '1/54', "r' U r2 U' r2 U' r2 U r'", "r' U r2 U' r2 U' r2 U r'"],
+  [51, 'I', '1/54', "f R U R' U' R U R' U' f'", "F U R U' R' U R U' R' F'"],
+  [52, 'I', '1/54', "R' U' R U' R' U y' R' U R B", "R U R' U R U' B U' B' R'"],
+  [53, 'Small L', '1/54', "r' U' R U' R' U R U' R' U2 r", "l' U2 L U L' U' L U L' U l"],
+  [54, 'Small L', '1/54', "r U R' U R U' R' U R U2 r'", "r U2 R' U' R U R' U' R U' r'"],
+  [55, 'I', '1/108', "F U' R2 D R' U2' R D' R2 U F'", "R' F R U R U' R2 F' R2 U' R' U R U R'"],
+  [56, 'I', '1/108', "r' U' r U' R' U R U' R' U R r' U r", "r' U' r U' R' U R U' R' U R r' U r"],
+  [57, 'Corners oriented', '1/108', "R U R' U' M' U R U' r'", "R U R' U' M' U R U' r'"],
+];
+
+// PLL: [nombre, probabilidad publicada por speedcube.quest, [algoritmos de speedcubing.org (el primero, el recomendado)], [algoritmos de speedcube.quest]]
+export const PLL_ROWS = [
+  ['Aa', '1/18', ["l' U R' D2 R U' R' D2 R2 x'", "y' r U r' U' r' F r2 U' r' U' r U r' F'", "R' D R U2 R' D' R U' R' D R U' R' D' R"], ["x R' U R' D2 R U' R' D2 R2 x'", "R' F R' B2 R F' R' B2 R2"]],
+  ['Ab', '1/18', ["x R2 D2 R U R' D2 R U' R x'"], ["x R2 D2 R U R' D2 R U' R x'", "U x' R U' R D2 R' U R D2 R2 x"]],
+  ['E', '1/36', ["l U' R' D R U R' D' R U R' D R U' R' D' x", "y R2 U F' R' U R U' R' U R U' R' U R U' F U' R2"], ["U R' U' R' D' R U' R' D R U R' D' R U R' D R2", "U x' R U' R' D R U R' D' R U R' D R U' R' D' x"]],
+  ['F', '1/18', ["R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R"], ["U R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R"]],
+  ['Ga', '1/18', ["R2 U R' U R' U' R U' R2 D U' R' U R D'", "R2 u R' U R' U' R u' R2 F' U F", "D' R2 U R' U R' U' R U' R2 U' D R' U R"], ["R2 U R' U R' U' R U' R2 D U' R' U R D'", "R2 u R' U R' U' R u' R2 y' R' U R", "D' R2 U R' U R' U' R U' R2 U' D R' U R"]],
+  ['Gb', '1/18', ["R' U' R U D' R2 U R' U R U' R U' R2 D"], ["U F' U' F R2 u R' U R U' R u' R2", "R' U' R U D' R2 U R' U R U' R U' R2 D", "R' d' F R2 u R' U R U' R u' R2"]],
+  ['Gc', '1/18', ["R2 U' R U' R U R' U R2 D' U R U' R' D", "y2 R2 F2 R U2 R U2 R' F R U R' U' R' F R2"], ["U2 R2 F2 R U2 R U2 R' F R U R' U' R' F R2", "R2 U' R U' R U R' U R2 D' U R U' R' D"]],
+  ['Gd', '1/18', ["R U R' U' D R2 U' R U' R' U R' U R2 D'"], ["R U R' U' D R2 U' R U' R' U R' U R2 D'", "D' R U R' U' D R2 U' R U' R' U R' U R2", "R U R' y' R2 u' R U' R' U R' u R2"]],
+  ['H', '1/72', ["M2 U' M2 U2 M2 U' M2", "R2 U2 R U2 R2 U2 R2 U2 R U2 R2", "R L U2 R' L' F' B' U2 F B"], ["M2 U M2 U2 M2 U M2", "M2 U' M2 U2 M2 U' M2", "M2 U2 M2 U M2 U2 M2"]],
+  ['Ja', '1/18', ["x R2 F R F' R U2 r' U r U2 x'", "L' U' L F L' U' L U L F' L2 U L", "R' U2 R U R' U2 L U' R U L'"], ["U R' U L' U2 R U' R' U2 R L", "L' U' L F L' U' L U L F' L' L' U L"]],
+  ['Jb', '1/18', ["R U R' F' R U R' U' R' F R2 U' R'", "R U2 R' U' R U2 L' U R' U' L"], ["R U R' F' R U R' U' R' F R2 U' R'"]],
+  ['Na', '1/72', ["R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'", "L U' R U2 L' U R' L U' R U2 L' U R'"], ["R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'"]],
+  ['Nb', '1/72', ["R' U R U' R' F' U' F R U R' F R' F' R U' R", "R' U L' U2 R U' L R' U L' U2 R U' L"], ["R' U R U' R' F' U' F R U R' F R' F' R U' R", "R' U R U' R' F' U' F R U R' U' R U' f R f'", "r' D' F r U' r' F' D r2 U r' U' r' F r F'"]],
+  ['Ra', '1/18', ["R U' R' U' R U R D R' U' R D' R' U2 R'", "R U R' F' R U2 R' U2 R' F R U R U2 R'", "y' L U2 L' U2 L F' L' U' L U L F L2"], ["U R U' R' U' R U R D R' U' R D' R' U2 R'", "U R U R' F' R U2 R' U2 R' F R U R U2 R'"]],
+  ['Rb', '1/18', ["R' U2 R' D' R U' R' D R U R U' R' U' R", "R' U2 R U2 R' F R U R' U' R' F' R2"], ["R' U2 R U2 R' F R U R' U' R' F' R2", "R' U2 R' D' R U' R' D R U R U' R' U' R"]],
+  ['T', '1/18', ["R U R' U' R' F R2 U' R' U' R U R' F'", "R U R' U' R' F R2 U' R' U F' L' U L"], ["R U R' U' R' F R2 U' R' U' R U R' F'"]],
+  ['Ua', '1/18', ["R U' R U R U R U' R' U' R2", "M2 U M U2 M' U M2", "y2 R U R' U R' U' R2 U' R' U R' U R"], ["R U R' U R' U' R2 U' R' U R' U R", "U2 R U' R U R U R U' R' U' R2", "U2 M2 U M U2 M' U M2"]],
+  ['Ub', '1/18', ["R2 U R U R' U' R' U' R' U R'", "M2 U' M U2 M' U' M2"], ["R' U R' U' R' U' R' U R U R2", "U2 R2 U R U R' U' R' U' R' U R'", "U2 M2 U' M U2 M' U' M2"]],
+  ['V', '1/18', ["R' U R' U' y R' F' R2 U' R' U R' F R F", "R U2 R' D R U' R U' R U R2 D R' U' R D2"], ["R' U R' d' R' F' R2 U' R' U R' F R F", "R' U R' U' R D' R' D R' U D' R2 U' R2 D R2", "U R U' R U R' D R D' R U' D R2 U R2 D' R2"]],
+  ['Y', '1/18', ["F R U' R' U' R U R' F' R U R' U' R' F R F'"], ["F R U' R' U' R U R' F' R U R' U' R' F R F'"]],
+  ['Z', '1/36', ["M2 U' M2 U' M' U2 M2 U2 M'", "y M' U' M2 U' M2 U' M' U2 M2", "R' U' R U' R U R U' R' U R U R2 U' R'"], ["U M' U M2 U M2 U M' U2 M2", "M2 U M2 U M' U2 M2 U2 M'", "U R' U' R U' R U R U' R' U R U R2 U' R'"]],
+];

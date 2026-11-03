@@ -51,4 +51,3 @@ export function isoPolygons(grid, inset = 0.92) {
   }
   return out;
 }
-

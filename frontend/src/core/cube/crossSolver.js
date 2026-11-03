@@ -66,4 +66,3 @@ export function solveCross(state, face = 'D') {
   }
   return solution;
 }
-

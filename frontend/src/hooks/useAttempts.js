@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import * as storage from '../storage/index.js';
 import { SYNCED_EVENT } from '../sync/events.js';
 import { createAttempt } from '../training/attempts.js';
+import { migrateAttempts } from '../training/legacy.js';
 
 /** Intentos de las zonas de entrenamiento, con persistencia. Orden cronológico. */
 export function useAttempts() {
@@ -12,7 +13,9 @@ export function useAttempts() {
 
   const reload = useCallback(async () => {
     const list = await storage.getAttempts();
-    setAttempts(list);
+    // Los intentos hechos con los identificadores antiguos pasan a los casos estándar (y se guardan para sincronizarlos).
+    const { attempts: migrated, changed } = migrateAttempts(list);
+    setAttempts(migrated);
     setLoaded(true);
   }, []);
 

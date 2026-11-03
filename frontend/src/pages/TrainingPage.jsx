@@ -7,8 +7,8 @@ import ZoneNav from '../components/training/ZoneNav.jsx';
 import ZoneStats from '../components/training/ZoneStats.jsx';
 
 /** Zona de entrenamiento: cinco pruebas, cada una con su práctica y sus propias estadísticas. */
-export default function TrainingPage({ settings, attemptsApi, busyRef }) {
-  const [zoneId, setZoneId] = useState('oll');
+export default function TrainingPage({ settings, attemptsApi, almanac, busyRef, target = null, onOpenCase }) {
+  const [zoneId, setZoneId] = useState(target?.zoneId ?? 'oll');
   const zone = getZone(zoneId);
   const counts = useMemo(() => countByZone(attemptsApi.attempts), [attemptsApi.attempts]);
 
@@ -24,8 +24,17 @@ export default function TrainingPage({ settings, attemptsApi, busyRef }) {
         <ZoneNav zones={ZONES} active={zoneId} counts={counts} onChange={setZoneId} />
         <div className="training__main">
           <ZoneInfo zone={zone} />
-          <PracticePanel key={zone.id} zone={zone} attemptsApi={attemptsApi} busyRef={busyRef} decimals={settings.decimals} />
-          <ZoneStats zone={zone} attempts={attemptsApi.attempts} decimals={settings.decimals} />
+          <PracticePanel
+            key={zone.id}
+            zone={zone} 
+            attemptsApi={attemptsApi} 
+            almanac={almanac}
+            busyRef={busyRef} 
+            decimals={settings.decimals} 
+            target={target?.zoneId === zone.id ? target : null}
+            onOpenCase={onOpenCase}
+          />
+          <ZoneStats zone={zone} attempts={attemptsApi.attempts} progress={almanac.progress} decimals={settings.decimals} />
         </div>
       </div>
     </div>
