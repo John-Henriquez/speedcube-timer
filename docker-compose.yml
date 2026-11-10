@@ -1,3 +1,13 @@
+# Toda la aplicación (frontend + backend + PostgreSQL) con un solo comando:
+#
+#   docker compose up --build    iniciar (la primera vez compila el frontend y tarda unos minutos)
+#   docker compose down          detener; NO borra los datos
+#
+# Los datos de PostgreSQL viven en el volumen "pgdata" y sobreviven a reinicios, a reconstruir las
+# imágenes y a "docker compose down". NO uses "docker compose down -v": ese -v sí borra el volumen.
+# No cambies el nombre de este volumen ni del proyecto (la carpeta), o Docker creará uno vacío nuevo.
+# Detalles en docs/docker.md.
+
 services:
   db:
     image: postgres:16-alpine
@@ -20,6 +30,7 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
+    # Dentro de Docker la base de datos se llama por el nombre del servicio, nunca "localhost".
       POSTGRES_HOST: db
     depends_on:
       db:
@@ -29,7 +40,33 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    # Aplica las migraciones pendientes (solo añade; nunca borra ni reinicia datos) y arranca el servidor.
+    # Si una migración falla, el backend no arranca y el error queda visible en los registros.
+    # "exec" hace que el servidor reciba la señal de parada y "docker compose down" sea rápido.
+    command: sh -c "python manage.py migrate --noinput && exec python manage.py runserver 0.0.0.0:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      # Se sirve en el 5173 (el mismo de antes) para conservar los datos locales del navegador,
+      # que se guardan por origen (http://localhost:5173). Con otro puerto parecerían perdidos.
+      - "5173:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
 
 volumes:
   pgdata:

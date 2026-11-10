@@ -4,6 +4,19 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
+## [0.9.1] - 2026-11-02
+### Añadido
+- Servicio `frontend` en Docker Compose (compilado con Vite y servido con nginx en el puerto 5173), de modo que toda la aplicación se inicia con `docker compose up --build` (docker)
+- Healthcheck del backend y del frontend, con arranque ordenado `db → backend → frontend` (docker)
+- `.dockerignore` del frontend y del backend, para no copiar `node_modules` ni archivos locales a las imágenes (docker)
+- Guía `docs/docker.md` con uso diario, copia de seguridad y restauración, y solución de problemas (docs)
+- Variable `CSRF_TRUSTED_ORIGINS` y pruebas de la configuración del backend (backend)
+
+### Cambiado
+- El backend aplica las migraciones con `--noinput` y se detiene más rápido al apagar (docker)
+- `localhost` y `127.0.0.1` quedan siempre permitidos en `ALLOWED_HOSTS`, para que el healthcheck no dependa del `.env` (backend)
+- `.env.example` reúne y documenta toda la configuración (docker)
+
 ## [0.9.0] - 2026-11-02
 ### Añadido
 - Simulador geométrico del cubo con toda la notación (giros, anchos, capas y rotaciones) y analizador de notación, contrastado con el modelo de piezas anterior (core)

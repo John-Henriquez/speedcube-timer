@@ -21,8 +21,10 @@ if not DEBUG and SECRET_KEY == DEV_SECRET_KEY:
     raise ImproperlyConfigured('Define DJANGO_SECRET_KEY cuando DJANGO_DEBUG no es 1.')
 
 # Para entrar desde otro dispositivo de la red local, agrega aquí la IP o el
-# nombre del PC servidor (por ejemplo 192.168.1.50).
-ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1')
+# nombre del PC servidor (por ejemplo 192.168.1.50). localhost y 127.0.0.1 se
+# permiten siempre: el healthcheck de Docker llama al backend desde dentro de su
+# propio contenedor.
+ALLOWED_HOSTS = sorted({*env_list('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1'), 'localhost', '127.0.0.1'})
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -110,3 +112,7 @@ REST_FRAMEWORK = {
 
 # Orígenes del frontend autorizados a llamar a la API.
 CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS', 'http://localhost:5173')
+
+# Orígenes de confianza para los formularios del panel /admin (con http://).
+# La API usa token, no cookies, así que no depende de esto.
+CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS', 'http://localhost:8000,http://127.0.0.1:8000')

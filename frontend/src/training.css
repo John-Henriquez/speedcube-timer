@@ -284,7 +284,7 @@
   display: grid;
   gap: 8px;
   padding: 12px 14px 14px;
-  background: hsl(calc(var(--hue)  25) 92% 76%);
+  background: hsl(calc(var(--hue) + 25) 92% 76%);
   color: hsl(var(--hue) 55% 10%);
   border: 3px solid hsl(var(--hue) 55% 14%);
   box-shadow: 5px 5px 0 var(--shadow);
@@ -346,7 +346,7 @@
 }
 .postit__item[data-state='invalida'] .postit__state {
   background: hsl(var(--hue) 55% 10%);
-  color: hsl(calc(var(--hue)  25) 92% 76%);
+  color: hsl(calc(var(--hue) + 25) 92% 76%);
   padding: 2px 4px;
 }
 .postit__when {
@@ -372,7 +372,7 @@
 }
 .postit .mini:hover:not(:disabled) {
   background: hsl(var(--hue) 55% 14%);
-  color: hsl(calc(var(--hue)  25) 92% 76%);
+  color: hsl(calc(var(--hue) + 25) 92% 76%);
 }
 .postit .mini:disabled {
   opacity: 0.35;
