@@ -1,0 +1,86 @@
+
+/*
+   TIMER DISPLAY
+   Temporizador principal y estados visuales
+*/
+
+.timer {
+  --tone: var(--color-text-secondary);
+
+  flex: 1 1 auto;
+  min-height: 46vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+
+  box-shadow: var(--shadow-sm);
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+/* ---------- Estados ---------- */
+
+.timer[data-tone='holding'] {
+  --tone: var(--color-danger);
+}
+
+.timer[data-tone='ready'] {
+  --tone: var(--color-success);
+}
+
+.timer[data-tone='inspecting'] {
+  --tone: var(--color-warning);
+}
+
+.timer[data-tone='stopped'] {
+  --tone: var(--color-primary);
+}
+
+.timer[data-tone='dnf'] {
+  --tone: var(--color-danger);
+}
+
+/* ---------- Tiempo ---------- */
+
+.timer__time {
+  font-family: var(--font-mono);
+  font-size: clamp(2.4rem, 11vw, 6.4rem);
+  font-weight: 500;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--tone);
+}
+
+/* ---------- Indicaciones ---------- */
+
+.timer__hint {
+  margin: 0;
+  min-height: 1.4em;
+  padding: 0 16px;
+
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ---------- Pantallas pequeñas ---------- */
+
+@media (max-width: 720px) {
+  .timer {
+    min-height: 44vh;
+  }
+}

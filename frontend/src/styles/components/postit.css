@@ -1,0 +1,167 @@
+
+/* =========================================================
+   POST-IT
+   Componente independiente de notas y registro de práctica
+   ========================================================= */
+
+.postit {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+
+  background: color-mix(
+    in srgb,
+    var(--color-primary) 12%,
+    var(--color-surface-elevated)
+  );
+  color: var(--color-text);
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--color-primary) 28%,
+    var(--color-border)
+  );
+  border-radius: 9px;
+  box-shadow: var(--shadow-sm);
+
+  font-size: 0.875rem;
+}
+
+/* ---------- Encabezado ---------- */
+
+.postit__title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.postit__title::before {
+  content: '';
+}
+
+.postit__scope {
+  margin: 0;
+  font-weight: 600;
+}
+
+.postit__empty,
+.postit__note {
+  margin: 0;
+}
+
+.postit__note {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Lista de registros ---------- */
+
+.postit__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.postit__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'num time state'
+    'when actions actions';
+  align-items: center;
+  gap: 4px 8px;
+  padding: 8px 0;
+
+  border-bottom: 1px solid color-mix(
+    in srgb,
+    var(--color-primary) 24%,
+    var(--color-border)
+  );
+}
+
+.postit__num {
+  grid-area: num;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.postit__time {
+  grid-area: time;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.postit__state {
+  grid-area: state;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.postit__item[data-state='invalida'] .postit__time {
+  text-decoration: line-through;
+  opacity: 0.65;
+}
+
+.postit__item[data-state='invalida'] .postit__state {
+  color: var(--color-danger);
+}
+
+.postit__when {
+  grid-area: when;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.postit__actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* ---------- Acciones ---------- */
+
+.postit .mini {
+  flex-shrink: 0;
+  padding: 5px 8px;
+
+  background: transparent;
+  color: var(--color-text);
+  border-color: color-mix(
+    in srgb,
+    var(--color-primary) 35%,
+    var(--color-border)
+  );
+  box-shadow: none;
+}
+
+.postit .mini:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: var(--color-accent);
+  border-color: var(--color-primary);
+}
+
+.postit .mini:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Paginación ---------- */
+
+.postit__pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}

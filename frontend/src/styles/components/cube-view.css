@@ -1,0 +1,62 @@
+
+/* =========================================================
+   CUBE VIEW
+   Representación visual del cubo
+   ========================================================= */
+
+.cube-view {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.cube-view__drawings {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.cube-view__iso {
+  width: 150px;
+  height: auto;
+}
+
+.cube-view__net {
+  width: 250px;
+  height: auto;
+}
+
+/* Renderizado SVG */
+.cube-view svg {
+  shape-rendering: geometricPrecision;
+}
+
+.cube-view polygon,
+.cube-view rect {
+  stroke: var(--color-border);
+  stroke-width: 0.09;
+}
+
+/* Descripción */
+.cube-view figcaption {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+  .cube-view__iso {
+    width: 120px;
+  }
+
+  .cube-view__net {
+    width: 210px;
+  }
+
+  .cube-view__drawings {
+    gap: 16px;
+  }
+}

@@ -1,0 +1,54 @@
+
+/* =========================================================
+   STATS PANEL
+   Estadísticas y distribución de paneles
+   ========================================================= */
+
+/* ---------- Distribución ---------- */
+
+.panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: 18px;
+  align-items: start;
+}
+
+/* ---------- Estadísticas ---------- */
+
+.stats {
+  margin: 0;
+}
+
+.stats__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stats__row:last-child {
+  border-bottom: 0;
+}
+
+.stats dt {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.stats dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ---------- Pantallas pequeñas ---------- */
+
+@media (max-width: 720px) {
+  .panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

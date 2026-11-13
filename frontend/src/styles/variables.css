@@ -1,0 +1,146 @@
+
+/*
+   SPEEDCUBE TIMER — DESIGN TOKENS
+   Identidad: Precision UI
+*/
+
+/* ---------- Tipografía ---------- */
+
+:root {
+  --font-heading: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* ---------- Timer / Calendario · Light ---------- */
+  
+  color-scheme: light;
+  
+  --color-bg: #F7F5EF;
+  --color-surface: #EFEBDF;
+  --color-surface-elevated: #FFFFFF;
+  --color-text: #292719;
+  --color-text-secondary: #625D4E;
+  --color-border: #DED5BB;
+  --color-accent: #B99A36;
+  --color-accent-ink: #292719;
+  --color-primary: #403A24;
+  --color-primary-hover: #514A30;
+
+
+  /* ---------- Estados semánticos ---------- */
+
+  --color-success: #3D7654;
+  --color-warning: #98701F;
+  --color-danger: #B34D42;
+  --color-neutral: #777777;
+
+  /* ---------- Efectos ---------- */
+
+  --shadow-sm: 0 1px 3px rgb(41 39 25 / 5%);
+  --shadow-md: 0 3px 10px rgb(41 39 25 / 8%);
+
+  /* ---------- Compatibilidad temporal ---------- */
+
+  --bg: var(--color-bg);
+  --surface: var(--color-surface);
+  --surface-2: var(--color-border);
+  --text: var(--color-text);
+  --muted: var(--color-text-secondary);
+  --line: var(--color-border);
+  --accent: var(--color-accent);
+  --accent-ink: var(--color-accent-ink);
+
+  --shadow: rgb(41 39 25 / 10%);
+
+  --ok: var(--color-success);
+  --warn: var(--color-warning);
+  --bad: var(--color-danger);
+
+  --font-pixel: var(--font-heading);
+  --font-digits: var(--font-mono);
+}
+
+/* ---------- Almanaque / Entrenamiento · Light ---------- */
+
+:root[data-theme='training'] {
+
+  color-scheme: light;
+
+  --color-bg: #F7F5F2;
+  --color-surface: #EFEBE7;
+  --color-surface-elevated: #FFFFFF;
+  --color-text: #253B59;
+  --color-text-secondary: #626F82;
+  --color-border: #E2DAD5;
+  --color-accent: #D77F6C;
+  --color-accent-ink: #253B59;
+  --color-primary: #253B59;
+  --color-primary-hover: #344E70;
+
+  /* ---------- Estados semánticos ---------- */
+  --color-success: #3D7654;
+  --color-warning: #98701F;
+  --color-danger: #B34D42;
+  --color-info: #496F87;
+  --color-neutral: #777777;
+
+  /* ---------- Efectos ---------- */
+  --shadow-sm: 0 1px 3px rgb(37 59 89 / 5%);
+  --shadow-md: 0 3px 10px rgb(37 59 89 / 8%);
+}
+
+/* ---------- Timer / Calendario · Dark ---------- */
+
+:root[data-color-scheme='dark'][data-theme='timer'] {
+  color-scheme: dark;
+
+  --color-bg: #211F19;
+  --color-surface: #302D24;
+  --color-surface-elevated: #393528;
+  --color-text: #F7F5EF;
+  --color-text-secondary: #C7C0AD;
+  --color-border: #494333;
+  --color-accent: #D6B95D;
+  --color-accent-ink: #292719;
+  --color-primary: #D6B95D;
+  --color-primary-hover: #E1C979;
+
+  /* ---------- Estados semánticos ---------- */
+  --color-success: #8BC59A;
+  --color-warning: #E4C16A;
+  --color-danger: #E58B7E;
+  --color-info: #8EB8D1;
+  --color-neutral: #A5A294;
+
+  /* ---------- Efectos ---------- */
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 15%);
+  --shadow-md: 0 3px 10px rgb(0 0 0 / 20%);
+}
+
+/* ---------- Almanaque / Entrenamiento · Dark ---------- */
+
+:root[data-color-scheme='dark'][data-theme='training'] {
+  color-scheme: dark;
+
+  --color-bg: #1D232D;
+  --color-surface: #293342;
+  --color-surface-elevated: #334052;
+  --color-text: #F0F2F5;
+  --color-text-secondary: #B2BDCC;
+  --color-border: #414F61;
+  --color-accent: #E69A87;
+  --color-accent-ink: #253B59;
+  --color-primary: #A8BBD4;
+  --color-primary-hover: #C0CEE0;
+
+  /* ---------- Estados semánticos ---------- */
+  --color-success: #8BC59A;
+  --color-warning: #E4C16A;
+  --color-danger: #E58B7E;
+  --color-info: #8EB8D1;
+  --color-neutral: #A5B1C1;
+
+  /* ---------- Efectos ---------- */
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 15%);
+  --shadow-md: 0 3px 10px rgb(0 0 0 / 20%);
+}

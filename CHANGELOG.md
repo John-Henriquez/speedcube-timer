@@ -4,6 +4,20 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
+## [0.9.2] - 2026-11-13
+
+### Añadido
+- Sistema centralizado de variables CSS para colores, tipografías, superficies, bordes y sombras (ui)
+- Hojas de estilos independientes para controles, timer, mezclas, estadísticas, sesiones, ajustes, meta diaria y calendario (ui)
+- Estilos independientes para el cubo, sincronización, entrenamiento y panel post-it, facilitando su mantenimiento y reutilización (ui)
+
+### Cambiado
+- Renovación visual de la interfaz hacia un diseño minimalista moderno, con jerarquía visual más clara, bordes sutiles y superficies diferenciadas (ui)
+- Tipografías Manrope, Inter e IBM Plex Mono para encabezados, interfaz y datos numéricos (ui)
+- Paleta semántica y diferenciación visual de las secciones Timer/Calendario y Entrenamiento/Almanaque (ui)
+- Reorganización de los estilos del calendario y los componentes de entrenamiento y Almanaque CFOP (ui)
+- Ajustes responsive en las vistas y componentes refactorizados (ui)
+
 ## [0.9.1] - 2026-11-02
 ### Añadido
 - Servicio `frontend` en Docker Compose (compilado con Vite y servido con nginx en el puerto 5173), de modo que toda la aplicación se inicia con `docker compose up --build` (docker)

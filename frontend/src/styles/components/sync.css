@@ -1,0 +1,83 @@
+
+/* =========================================================
+   SYNC
+   Estado y configuración de sincronización
+   ========================================================= */
+
+.sync {
+  color: var(--color-text-secondary);
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto 12px;
+  font-size: 0.875rem;
+}
+
+.sync summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.sync summary::-webkit-details-marker {
+  display: none;
+}
+
+.sync summary::before {
+  content: '+ ';
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+}
+
+.sync[open] summary::before {
+  content: '− ';
+}
+
+.sync__status {
+  margin-left: 10px;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.sync__status[data-status='offline'] {
+  color: var(--color-warning);
+}
+
+.sync__status[data-status='error'],
+.sync__status[data-status='unauthorized'] {
+  color: var(--color-danger);
+}
+
+.sync__status[data-status='ok'] {
+  color: var(--color-success);
+}
+
+.sync__form {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.sync__form label {
+  display: grid;
+  gap: 5px;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.sync__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.sync__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 0.875rem;
+}

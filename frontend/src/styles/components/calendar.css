@@ -1,0 +1,178 @@
+
+/* =========================================================
+   CALENDAR
+   Calendario de actividad y navegación mensual
+   ========================================================= */
+
+/* ---------- Cabecera ---------- */
+
+.calendar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.calendar__nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar__month {
+  min-width: 11rem;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.calendar__summary {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ---------- Cuadrícula ---------- */
+
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.calendar__weekday {
+  padding: 4px 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ---------- Días ---------- */
+
+.calendar__day {
+  --heat: var(--color-surface);
+
+  position: relative;
+  aspect-ratio: 1.15;
+  min-height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 7px 8px;
+
+  text-align: left;
+  font: inherit;
+  color: var(--color-text);
+
+  background: var(--heat);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+/* Intensidad de actividad */
+.calendar__day[data-heat='1'] {
+  --heat: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+}
+
+.calendar__day[data-heat='2'] {
+  --heat: color-mix(in srgb, var(--color-primary) 24%, var(--color-surface));
+}
+
+.calendar__day[data-heat='3'] {
+  --heat: color-mix(in srgb, var(--color-primary) 38%, var(--color-surface));
+}
+
+.calendar__day[data-heat='4'] {
+  --heat: color-mix(in srgb, var(--color-primary) 52%, var(--color-surface));
+}
+
+/* Días fuera del mes */
+.calendar__day[data-outside='true'] {
+  opacity: 0.4;
+}
+
+/* Día actual */
+.calendar__day[data-today='true'] {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+/* Día seleccionado */
+.calendar__day[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+/* Interacción */
+.calendar__day:hover {
+  border-color: var(--color-primary);
+}
+
+.calendar__day:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Contenido de cada día ---------- */
+
+.calendar__num {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar__count {
+  align-self: flex-end;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Detalle del día ---------- */
+
+.calendar__detail {
+  display: grid;
+  gap: 16px;
+}
+
+.calendar__detail > h2 {
+  font-size: 1rem;
+}
+
+.calendar__zones {
+  margin: 6px 0 0;
+  padding-left: 1.2rem;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Pantallas pequeñas ---------- */
+
+@media (max-width: 720px) {
+  .calendar__grid {
+    gap: 5px;
+  }
+
+  .calendar__day {
+    min-height: 46px;
+    padding: 5px;
+    border-radius: 6px;
+  }
+
+  .calendar__num,
+  .calendar__count {
+    font-size: 0.75rem;
+  }
+}

@@ -1,0 +1,130 @@
+
+/*
+    GLOBAL — Precision UI
+    Reset, tipografía y estructura de aplicación
+*/
+
+/* ---------- Reset ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Elementos base ---------- */
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: none;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.125rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+p {
+  margin-top: 0;
+}
+
+/* ---------- Estructura de aplicación ---------- */
+
+.app {
+  min-height: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding:
+    max(18px, env(safe-area-inset-top))
+    20px
+    max(22px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chrome {
+  transition: opacity 0.15s ease;
+}
+
+/* Ocultar elementos secundarios durante la resolución */
+
+.app:has(.timer[data-tone='running']) .chrome {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  .app {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+
+/* ---------- Accesibilidad ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .chrome {
+    transition: none;
+  }
+}

@@ -1,0 +1,72 @@
+
+/* =========================================================
+   SESSION LIST
+   Historial de resoluciones de la sesión
+   ========================================================= */
+
+/* ---------- Estado vacío ---------- */
+
+.empty {
+  margin: 8px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ---------- Lista ---------- */
+
+.solves {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 340px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.solve {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.solve:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Número de resolución ---------- */
+
+.solve__num {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Tiempo ---------- */
+
+.solve__time {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.solve__time[data-penalty='DNF'] {
+  color: var(--color-danger);
+}
+
+.solve__time[data-penalty='+2'] {
+  color: var(--color-warning);
+}
+
+/* ---------- Acciones ---------- */
+
+.solve__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
