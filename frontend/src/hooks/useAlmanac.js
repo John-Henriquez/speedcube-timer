@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as storage from '../storage/index.js';
+import { EVENTS, on } from '../sync/events.js';
 
 const KEYS = { progress: 'caseProgress', algs: 'userAlgorithms', preferred: 'preferredAlgorithm' };
 
@@ -14,18 +15,24 @@ export function useAlmanac() {
   const [loaded, setLoaded] = useState(false);
   const ref = useRef({ progress: {}, algs: {}, preferred: {} });
 
+  // Se carga al empezar y de nuevo al cambiar de espacio (invitado / cuenta): cada espacio tiene su propio progreso.
+
   useEffect(() => {
     let alive = true;
-    Promise.all([storage.getMeta(KEYS.progress), storage.getMeta(KEYS.algs), storage.getMeta(KEYS.preferred)]).then(([p, a, f]) => {
-      if (!alive) return;
-      ref.current = { progress: p ?? {}, algs: a ?? {}, preferred: f ?? {} };
-      setProgress(ref.current.progress);
-      setUserAlgs(ref.current.algs);
-      setPreferred(ref.current.preferred);
-      setLoaded(true);
-    });
+    const load = () =>
+      Promise.all([storage.getMeta(KEYS.progress), storage.getMeta(KEYS.algs), storage.getMeta(KEYS.preferred)]).then(([p, a, f]) => {
+        if (!alive) return;
+        ref.current = { progress: p ?? {}, algs: a ?? {}, preferred: f ?? {} };
+        setProgress(ref.current.progress);
+        setUserAlgs(ref.current.algs);
+        setPreferred(ref.current.preferred);
+        setLoaded(true);
+      });
+    load();
+    const off = on(EVENTS.DATA, load);
     return () => {
       alive = false;
+      off();
     };
   }, []);
 

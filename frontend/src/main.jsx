@@ -30,10 +30,10 @@ import './styles/components/settings.css';
 import './styles/components/daily-goal.css';
 import './styles/components/calendar.css';
 import './styles/components/cube-view.css';
-import './styles/components/sync.css';
 import './styles/components/training.css';
 import './styles/components/postit.css';
 import './styles/components/almanac.css';
+import './account.css';
 import './styles/pages.css';
 
 

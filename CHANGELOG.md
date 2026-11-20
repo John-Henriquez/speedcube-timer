@@ -4,6 +4,25 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
+## [0.10.0] - 2026-11-20
+
+### Añadido
+- Cuentas: registro, inicio y cierre de sesión, y recuperación de contraseña por correo (auth)
+- Inicio de sesión con Google, opcional; no se vincula en silencio a cuentas existentes (auth)
+- Panel de cuenta con perfil, seguridad, estado de sincronización, pendientes y errores (auth)
+- Un espacio de datos aislado por cuenta y por invitado, en bases IndexedDB separadas (storage)
+- Cola persistente de operaciones con reintentos de espera creciente y sincronización automática (sync)
+- Migración de invitado a cuenta nueva o existente: idempotente, reanudable y sin borrar lo local hasta confirmar (sync)
+- Cierre de sesión que conserva aislados los datos sin respaldar y avisa del estado real (auth)
+- Sesiones por dispositivo con token guardado con hash, caducidad y límite de intentos por IP (backend)
+- Guía `docs/cuentas.md` (docs)
+
+### Cambiado
+- La sincronización acepta o rechaza cada registro por separado y responde cuál ganó (backend)
+- Los conflictos los decide la hora de edición del dispositivo, no el orden de llegada (backend)
+- La sincronización manual se sustituye por la automática (sync)
+- Se retira `/api/auth/token/` (backend)
+
 ## [0.9.2] - 2026-11-13
 
 ### Añadido

@@ -46,6 +46,8 @@ class Solve(models.Model):
     solved_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # Hora (del dispositivo) de la última edición: decide qué versión gana si dos dispositivos editan lo mismo.
+    client_updated_at = models.DateTimeField(null=True, blank=True)
     deleted_at = models.DateTimeField(null=True, blank=True)  # borrado lógico
 
     class Meta:
@@ -106,6 +108,7 @@ class Attempt(models.Model):
     attempted_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    client_updated_at = models.DateTimeField(null=True, blank=True)
     deleted_at = models.DateTimeField(null=True, blank=True)  # borrado lógico
 
     class Meta:

@@ -3,9 +3,11 @@ import { useAlmanac } from './hooks/useAlmanac.js';
 import { useAttempts } from './hooks/useAttempts.js';
 import { useSettings } from './hooks/useSettings.js';
 import { useSolves } from './hooks/useSolves.js';
-import { useSync } from './hooks/useSync.js';
+import { AuthProvider } from './auth/AuthContext.jsx';
+import { parseResetHash } from './auth/resetLink.js';
 import NavTabs from './components/NavTabs.jsx';
-import SyncPanel from './components/SyncPanel.jsx';
+import SyncBadge from './components/account/SyncBadge.jsx';
+import AccountPage from './pages/AccountPage.jsx';
 import AlmanacPage from './pages/AlmanacPage.jsx';
 import CalendarPage from './pages/CalendarPage.jsx';
 import TimerPage from './pages/TimerPage.jsx';
@@ -16,10 +18,13 @@ const SECTIONS = [
   { id: 'calendar', label: 'Calendario' },
   { id: 'almanac', label: 'Almanaque' },
   { id: 'training', label: 'Entrenamiento' },
+  { id: 'account', label: 'Cuenta' },
 ];
 
-export default function App() {
-  const [section, setSection] = useState('timer');
+function Shell({ busyRef }) {
+  // Si se llega desde el enlace del correo de recuperación (#/reset?...), se abre directo la pantalla de contraseña nueva.
+  const [resetParams, setResetParams] = useState(() => parseResetHash(globalThis.location?.hash));
+  const [section, setSection] = useState(resetParams ? 'account' : 'timer');
   const [practiceTarget, setPracticeTarget] = useState(null); 
   const [almanacCase, setAlmanacCase] = useState(null);
   const { settings, update: updateSettings } = useSettings();
@@ -29,8 +34,6 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = section === 'training' || section === 'almanac' ? 'training' : 'timer';
   }, [section]);
-  const busyRef = useRef(false); 
-  const sync = useSync({ shouldSkip: () => busyRef.current });
 
   return (
     <div className="app" data-section={section}>
@@ -80,10 +83,29 @@ export default function App() {
         />
       )}
 
+      {section === 'account' && (
+        <AccountPage
+          resetParams={resetParams}
+          onResetDone={() => {
+            setResetParams(null);
+            globalThis.history?.replaceState(null, '', globalThis.location.pathname + globalThis.location.search); // quita el token de la dirección
+          }}
+        />
+      )}
+
       <footer className="chrome footer">
-        <SyncPanel sync={sync} />
+        <SyncBadge onClick={() => setSection('account')} />
         <div>v{__APP_VERSION__}</div>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  const busyRef = useRef(false); // true mientras algún timer corre: no se sincroniza en ese momento
+  return (
+    <AuthProvider shouldSkip={() => busyRef.current}>
+      <Shell busyRef={busyRef} />
+    </AuthProvider>
   );
 }

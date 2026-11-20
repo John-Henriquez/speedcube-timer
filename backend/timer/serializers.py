@@ -19,7 +19,7 @@ class SolveSerializer(serializers.ModelSerializer):
         model = Solve
         fields = [
             'id', 'session', 'puzzle', 'time_ms', 'penalty', 'scramble',
-            'solved_at', 'created_at', 'updated_at', 'deleted_at',
+            'solved_at', 'created_at', 'updated_at', 'client_updated_at', 'deleted_at',
         ]
         read_only_fields = ['created_at', 'updated_at']
 
@@ -46,7 +46,7 @@ class AttemptSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'zone', 'case_id', 'mode', 'scramble', 'algorithm_id', 'algorithm_notation', 'time_ms', 'recognition_ms',
             'capture', 'validation', 'moves', 'stage_marks', 'notes', 'protocol_version',
-            'attempted_at', 'created_at', 'updated_at', 'deleted_at',
+            'attempted_at', 'created_at', 'updated_at', 'client_updated_at', 'deleted_at',
         ]
         read_only_fields = ['created_at', 'updated_at']
 

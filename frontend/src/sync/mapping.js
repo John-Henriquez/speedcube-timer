@@ -13,6 +13,7 @@ export const solveToServer = (s) => ({
   penalty: s.penalty ?? null,
   scramble: s.scramble ?? '',
   solved_at: s.date,
+  client_updated_at: s.updatedAt ?? null, // decide qué versión gana si dos dispositivos editan lo mismo
   deleted_at: s.deletedAt ?? null,
 });
 
@@ -44,6 +45,7 @@ export const attemptToServer = (a) => ({
   notes: a.notes ?? '',
   protocol_version: a.protocolVersion ?? 1,
   attempted_at: a.date,
+  client_updated_at: a.updatedAt ?? null,
   deleted_at: a.deletedAt ?? null,
 });
 

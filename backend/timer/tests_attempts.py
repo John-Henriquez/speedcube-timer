@@ -47,13 +47,15 @@ class AttemptSyncTests(ApiTestCase):
         self.assertEqual(Attempt.objects.get().validation, 'invalida')
 
     def test_ejecucion_exige_tiempo_pero_conocimiento_no(self):
-        self.assertEqual(self.push(attempts=[attempt_payload(time_ms=None)]).status_code, 400)
+        sin_tiempo = attempt_payload(time_ms=None)
+        self.assertIn(sin_tiempo['id'], self.push(attempts=[sin_tiempo]).json()['rejected']['attempts'])
         ok = attempt_payload(mode='conocimiento', time_ms=None, validation='valida')
         self.assertEqual(self.push(attempts=[ok]).status_code, 200)
 
     def test_valores_invalidos(self):
         for field, value in [('mode', 'rapido'), ('capture', 'magia'), ('validation', 'quizas'), ('time_ms', -1)]:
-            self.assertEqual(self.push(attempts=[attempt_payload(**{field: value})]).status_code, 400, field)
+            mala = attempt_payload(**{field: value})
+            self.assertIn(mala['id'], self.push(attempts=[mala]).json()['rejected']['attempts'], field)
         self.assertEqual(Attempt.objects.count(), 0)
 
     def test_borrado_logico_llega_en_since(self):
@@ -71,7 +73,8 @@ class AttemptSyncTests(ApiTestCase):
         self.push(attempts=[attempt])
         self.auth(self.other)
         self.assertEqual(self.client.get('/api/sync/').json()['attempts'], [])
-        self.assertEqual(self.push(attempts=[attempt_payload(id=attempt['id'], time_ms=1)]).status_code, 403)
+        intruso = attempt_payload(id=attempt['id'], time_ms=1)
+        self.assertIn(attempt['id'], self.push(attempts=[intruso]).json()['rejected']['attempts'])
         self.assertEqual(Attempt.objects.get(pk=attempt['id']).time_ms, 1840)
 
     def test_el_envio_sin_intentos_sigue_funcionando(self):

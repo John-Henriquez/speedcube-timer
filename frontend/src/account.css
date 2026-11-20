@@ -1,0 +1,194 @@
+/* ---------- Cuenta: acceso, perfil y estado de sincronización (usa los tokens del tema retro) ---------- */
+.acct-page {
+  max-width: 560px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.acct-page p,
+.acct-card p,
+.acct-stats dd {
+  margin: 0;
+}
+.acct-card .seg {
+  align-self: flex-start;
+  box-shadow: none;
+}
+.acct-card {
+  background: var(--surface);
+  border: 3px solid var(--line);
+  box-shadow: 5px 5px 0 var(--shadow);
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.acct-title {
+  font-family: var(--font-pixel);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+}
+.acct-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 3px dashed var(--line);
+}
+.acct-section > h3 {
+  font-family: var(--font-pixel);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.acct-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.acct-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.acct-field label {
+  font-family: var(--font-pixel);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.acct-field input {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  width: 100%;
+}
+.acct-field input[aria-invalid='true'] {
+  border-color: var(--bad);
+}
+.acct-hint {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+.acct-error {
+  color: var(--bad);
+  font-size: 1.05rem;
+}
+.acct-ok {
+  color: var(--ok);
+  font-size: 1.05rem;
+}
+.acct-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.acct-note {
+  border: 3px solid var(--line);
+  padding: 8px 12px;
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.acct-note--warn {
+  border-color: var(--warn);
+}
+.acct-note--bad {
+  border-color: var(--bad);
+}
+
+/* Estado: el color nunca va solo, siempre acompaña a un texto. */
+.acct-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  --tone: var(--muted);
+  color: var(--tone);
+}
+.acct-status--ok {
+  --tone: var(--ok);
+}
+.acct-status--warn {
+  --tone: var(--warn);
+}
+.acct-status--bad {
+  --tone: var(--bad);
+}
+.acct-status--muted {
+  --tone: var(--muted);
+}
+.acct-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--tone);
+  display: inline-block;
+}
+.acct-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px 16px;
+}
+.acct-stats dt {
+  font-family: var(--font-pixel);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.acct-stats dd {
+  font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.acct-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 0;
+  padding: 2px 6px;
+  font-family: var(--font-pixel);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--tone, var(--muted));
+  cursor: pointer;
+}
+.acct-badge:hover {
+  text-decoration: underline;
+}
+
+.acct-or {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 3px dashed var(--line);
+}
+.acct-or > span {
+  font-family: var(--font-pixel);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.acct-advanced > summary {
+  cursor: pointer;
+  font-family: var(--font-pixel);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.acct-advanced[open] > summary {
+  margin-bottom: 10px;
+}
+.acct-google-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

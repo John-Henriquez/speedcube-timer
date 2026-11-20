@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as storage from '../storage/index.js';
-import { SYNCED_EVENT } from '../sync/events.js';
+import { EVENTS, on } from '../sync/events.js';
 
 function newId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -22,8 +22,7 @@ export function useSolves() {
   // Carga inicial y recarga cuando una sincronización trae datos nuevos.
   useEffect(() => {
     reload();
-    window.addEventListener(SYNCED_EVENT, reload);
-    return () => window.removeEventListener(SYNCED_EVENT, reload);
+    return on(EVENTS.DATA, reload); // al cambiar de espacio o al bajar cambios del servidor
   }, [reload]);
 
   const add = useCallback((data) => {

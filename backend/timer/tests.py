@@ -1,7 +1,7 @@
 import uuid
 
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
+from accounts.models import AuthToken
 from rest_framework.test import APITestCase
 
 from .models import Session, Solve
@@ -31,8 +31,9 @@ class ApiTestCase(APITestCase):
         self.auth(self.user)
 
     def auth(self, user):
-        token, _ = Token.objects.get_or_create(user=user)
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
+        _, raw = AuthToken.issue(user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {raw}')
+
 
     def push(self, **body):
         return self.client.post('/api/sync/', body, format='json')
@@ -50,14 +51,9 @@ class AccessTests(ApiTestCase):
         self.assertEqual(self.client.get('/api/sync/').status_code, 401)
         self.assertEqual(self.client.post('/api/sync/', {}, format='json').status_code, 401)
 
-    def test_obtener_token(self):
-        self.client.credentials()
-        response = self.client.post(
-            '/api/auth/token/', {'username': 'john', 'password': 'pw-segura-123'}, format='json'
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('token', response.json())
-
+    def test_un_token_inventado_o_ajeno_no_sirve(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token inventado')
+        self.assertEqual(self.client.get('/api/sync/').status_code, 401)
 
 class SyncTests(ApiTestCase):
     def test_subir_y_bajar(self):
@@ -104,18 +100,55 @@ class SyncTests(ApiTestCase):
         self.assertEqual(self.client.get('/api/sync/', {'since': 'ayer'}).status_code, 400)
 
     def test_penalizacion_invalida(self):
-        response = self.push(solves=[solve_payload(penalty='+5')])
-        self.assertEqual(response.status_code, 400)
+        mala = solve_payload(penalty='+5')
+        response = self.push(solves=[mala])
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('penalty', response.json()['rejected']['solves'][mala['id']])
         self.assertEqual(Solve.objects.count(), 0)
 
     def test_tiempo_invalido(self):
-        self.assertEqual(self.push(solves=[solve_payload(time_ms=-1)]).status_code, 400)
+        mala = solve_payload(time_ms=-1)
+        self.assertIn(mala['id'], self.push(solves=[mala]).json()['rejected']['solves'])
 
-    def test_lote_con_error_no_guarda_nada(self):
+    def test_un_dato_malo_no_bloquea_a_los_demas(self):
         buena = solve_payload()
         mala = solve_payload(time_ms=-5)
-        self.assertEqual(self.push(solves=[buena, mala]).status_code, 400)
-        self.assertEqual(Solve.objects.count(), 0)
+        body = self.push(solves=[buena, mala]).json()
+        self.assertEqual(body['accepted']['solves'], [buena['id']])
+        self.assertEqual(list(body['rejected']['solves']), [mala['id']])
+        self.assertEqual(Solve.objects.count(), 1)  # la buena se guardó
+
+    def test_la_respuesta_dice_que_paso_con_cada_id(self):
+        a, b = solve_payload(), solve_payload()
+        body = self.push(solves=[a, b]).json()
+        self.assertEqual(sorted(body['accepted']['solves']), sorted([a['id'], b['id']]))
+        self.assertEqual(body['stale']['solves'], [])
+        self.assertEqual(body['solves'], 2)  # el conteo de siempre se mantiene
+
+    def test_una_version_mas_antigua_no_pisa_a_la_mas_reciente(self):
+        solve = solve_payload(client_updated_at='2026-11-01T12:00:00Z', time_ms=1000)
+        self.push(solves=[solve])
+        vieja = dict(solve, client_updated_at='2026-11-01T11:00:00Z', time_ms=9999)
+        body = self.push(solves=[vieja]).json()
+        self.assertEqual(body['stale']['solves'], [solve['id']])
+        self.assertEqual(Solve.objects.get(pk=solve['id']).time_ms, 1000)  # gana la reciente
+        nueva = dict(solve, client_updated_at='2026-11-01T13:00:00Z', time_ms=2000)
+        self.assertEqual(self.push(solves=[nueva]).json()['accepted']['solves'], [solve['id']])
+        self.assertEqual(Solve.objects.get(pk=solve['id']).time_ms, 2000)
+
+    def test_reenviar_lo_mismo_es_idempotente_y_no_es_obsoleto(self):
+        solve = solve_payload(client_updated_at='2026-11-01T12:00:00Z')
+        self.push(solves=[solve])
+        body = self.push(solves=[solve]).json()  # misma hora: se acepta de nuevo, sin duplicar
+        self.assertEqual(body['accepted']['solves'], [solve['id']])
+        self.assertEqual(Solve.objects.count(), 1)
+
+    def test_un_borrado_mas_antiguo_no_revive_ni_borra_lo_mas_nuevo(self):
+        solve = solve_payload(client_updated_at='2026-11-01T12:00:00Z')
+        self.push(solves=[solve])
+        borrado_viejo = dict(solve, client_updated_at='2026-11-01T10:00:00Z', deleted_at='2026-11-01T10:00:00Z')
+        self.assertEqual(self.push(solves=[borrado_viejo]).json()['stale']['solves'], [solve['id']])
+        self.assertIsNone(Solve.objects.get(pk=solve['id']).deleted_at)
 
     def test_formato_invalido(self):
         self.assertEqual(self.push(solves='hola').status_code, 400)
@@ -133,10 +166,21 @@ class IsolationTests(ApiTestCase):
         self.push(solves=[solve])
         self.auth(self.other)
         response = self.push(solves=[solve_payload(id=solve['id'], time_ms=1)])
-        self.assertEqual(response.status_code, 403)
+        self.assertIn(solve['id'], response.json()['rejected']['solves'])
         self.assertEqual(Solve.objects.get(pk=solve['id']).time_ms, 12340)
+        self.assertEqual(Solve.objects.get(pk=solve['id']).user, self.user)
+
+    def test_el_cliente_no_decide_de_quien_es_un_registro(self):
+        # Aunque el cuerpo diga que el dueño es otro usuario, manda la sesión.
+        solve = solve_payload(user=self.other.id, user_id=self.other.id)
+        self.push(solves=[solve])
+        self.assertEqual(Solve.objects.get(pk=solve['id']).user, self.user)
+        self.auth(self.other)
+        self.assertEqual(self.client.get('/api/sync/').json()['solves'], [])
 
     def test_sesion_de_otro_usuario_es_rechazada(self):
         ajena = Session.objects.create(user=self.other, name='Ajena')
-        response = self.push(solves=[solve_payload(session=str(ajena.id))])
-        self.assertEqual(response.status_code, 400)
+        mala = solve_payload(session=str(ajena.id))
+        response = self.push(solves=[mala])
+        self.assertIn(mala['id'], response.json()['rejected']['solves'])
+        self.assertEqual(Solve.objects.count(), 0)

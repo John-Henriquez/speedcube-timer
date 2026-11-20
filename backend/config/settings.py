@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'timer',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -106,8 +107,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication'],
+    'DEFAULT_AUTHENTICATION_CLASSES': ['accounts.authentication.TokenAuthentication'],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
+    # Límite de intentos por IP en registro, inicio de sesión, recuperación y Google (frena la fuerza bruta).
+    'DEFAULT_THROTTLE_RATES': {'auth': os.environ.get('AUTH_THROTTLE_RATE', '30/hour')},
 }
 
 # Orígenes del frontend autorizados a llamar a la API.
@@ -116,3 +119,21 @@ CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS', 'http://localhost:5173')
 # Orígenes de confianza para los formularios del panel /admin (con http://).
 # La API usa token, no cookies, así que no depende de esto.
 CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS', 'http://localhost:8000,http://127.0.0.1:8000')
+
+# --- Cuentas ---
+# Días que dura una sesión (token) sin volver a iniciar sesión.
+AUTH_TOKEN_TTL_DAYS = int(os.environ.get('AUTH_TOKEN_TTL_DAYS', '30'))
+# Identificador de cliente de Google OAuth (vacío = el inicio de sesión con Google queda desactivado).
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+# Dirección del frontend, para los enlaces de los correos de recuperación de contraseña.
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173').rstrip('/')
+
+# Correo: por defecto se escribe en la consola del backend (útil en desarrollo). Para enviarlo de verdad,
+# define EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend y los datos del servidor SMTP.
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '25'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', '0') == '1'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Speedcube Timer <no-reply@localhost>')

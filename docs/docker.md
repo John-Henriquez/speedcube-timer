@@ -37,6 +37,7 @@ Una sola configuración para todo, copiada de `.env.example`. El `.env` real no 
 | `DJANGO_ALLOWED_HOSTS` | nombres con los que se puede llamar al backend (`localhost` y `127.0.0.1` siempre se permiten) |
 | `CORS_ALLOWED_ORIGINS` | páginas web autorizadas a usar la API |
 | `CSRF_TRUSTED_ORIGINS` | solo para el formulario del `/admin`; casi nunca hay que tocarlo |
+| `GOOGLE_CLIENT_ID`, `FRONTEND_URL`, `EMAIL_*`, `AUTH_*`, `VITE_API_URL` | cuentas y recuperación de contraseña; ver [cuentas.md](cuentas.md) |
 
 Para usarlo desde el celular en la misma red: agrega la IP del PC a `DJANGO_ALLOWED_HOSTS` (por ejemplo `192.168.1.50`) y
 `http://192.168.1.50:5173` a `CORS_ALLOWED_ORIGINS`, y reinicia con `docker compose up -d`.
