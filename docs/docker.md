@@ -19,11 +19,12 @@ Para volver a iniciar sin recompilar: `docker compose up`. Para dejarlo en segun
 | `db` | PostgreSQL 16 | solo para herramientas como DBeaver | 5433 (solo este PC) |
 
 Dentro de Docker los servicios se llaman entre sí por su nombre (el backend usa `db:5432`). El navegador, en cambio, está
-fuera de Docker: por eso usa `localhost`. En el panel "Sincronización" de la aplicación, el servidor es `http://localhost:8000`.
+fuera de Docker: por eso usa `localhost`. La app busca el backend en el mismo equipo que sirve la página, puerto 8000; si
+hiciera falta otra dirección, se cambia en Cuenta → Servidor.
 
-El frontend se sirve en el **5173**, el mismo puerto que usaba `npm run dev`. No es casual: los datos que solo viven en el
-navegador (estado de aprendizaje, algoritmos propios, ajustes) se guardan **por origen** (`http://localhost:5173`); con otro
-puerto parecerían perdidos.
+El frontend se sirve en el **5173**, el mismo puerto que usaba `npm run dev`. No es casual: los datos que viven en el
+navegador (lo del invitado, la copia de trabajo de cada cuenta, el progreso del almanaque y los ajustes) se guardan **por
+origen** (`http://localhost:5173`); con otro puerto parecerían perdidos.
 
 ## Configuración (`.env`)
 
@@ -79,7 +80,7 @@ docker compose exec db sh -c 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" -
 |---|---|
 | ver el estado y la salud de cada servicio | `docker compose ps` |
 | ver los registros de un servicio | `docker compose logs -f backend` |
-| crear un usuario para la sincronización | `docker compose exec backend python manage.py createsuperuser` |
+| crear un administrador (para `/admin`; los usuarios normales se registran en la app) | `docker compose exec backend python manage.py createsuperuser` |
 | ejecutar las pruebas del backend | `docker compose exec backend python manage.py test` |
 | ver cambios nuevos del frontend | `docker compose up -d --build frontend` |
 | reiniciar un servicio | `docker compose restart backend` |

@@ -4,6 +4,16 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
+### Añadido
+- Referencia de la API en `docs/api.md`, con el contrato de sincronización (docs)
+
+### Cambiado
+- README unificado en la raíz: funcionalidades por estado, arquitectura, Docker, comandos y guía para continuar (docs)
+- `docs/docker.md` actualizado tras el sistema de cuentas (docs)
+
+### Eliminado
+- `frontend/README.md`, integrado en el README principal (docs)
+
 ## [0.10.0] - 2026-11-20
 
 ### Añadido
