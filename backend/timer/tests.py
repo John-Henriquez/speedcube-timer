@@ -1,12 +1,11 @@
 import uuid
 
-from django.contrib.auth import get_user_model
-from accounts.models import AuthToken
+from django.test import override_settings
 from rest_framework.test import APITestCase
 
-from .models import Session, Solve
+from accounts.models import AuthToken, User
 
-User = get_user_model()
+from .models import Session, Solve
 
 
 def solve_payload(**overrides):
@@ -59,7 +58,7 @@ class SyncTests(ApiTestCase):
     def test_subir_y_bajar(self):
         session_id = str(uuid.uuid4())
         solve = solve_payload(session=session_id, penalty='+2')
-        response = self.push(sessions=[{'id': session_id, 'name': 'Práctica', 'puzzle': '3x3'}], solves=[solve])
+        response = self.push(sessions=[{'id': session_id, 'name': 'Práctica'}], solves=[solve])
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['solves'], 1)
 
@@ -90,11 +89,20 @@ class SyncTests(ApiTestCase):
         self.assertIsNotNone(changes['solves'][0]['deleted_at'])
         self.assertEqual(Solve.objects.count(), 1)  # el borrado es lógico
 
+    @override_settings(SYNC_CURSOR_OVERLAP_SECONDS=0)
     def test_since_filtra_lo_ya_sincronizado(self):
         self.push(solves=[solve_payload()])
         server_time = self.client.get('/api/sync/').json()['server_time']
         changes = self.client.get('/api/sync/', {'since': server_time}).json()
         self.assertEqual(changes['solves'], [])
+
+    def test_el_cursor_se_solapa_unos_segundos_para_no_perder_escrituras_fuera_de_orden(self):
+        # Con el solapamiento por defecto, pedir desde "ahora" todavía devuelve lo recién escrito (y es inocuo
+        # reenviarlo: el guardado es idempotente). Con el cursor exacto, una escritura que se confirma un instante
+        # tarde con una hora anterior quedaría fuera para siempre.
+        self.push(solves=[solve_payload()])
+        server_time = self.client.get('/api/sync/').json()['server_time']
+        self.assertEqual(len(self.client.get('/api/sync/', {'since': server_time}).json()['solves']), 1)
 
     def test_since_invalido(self):
         self.assertEqual(self.client.get('/api/sync/', {'since': 'ayer'}).status_code, 400)

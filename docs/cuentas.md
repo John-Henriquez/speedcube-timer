@@ -68,4 +68,5 @@ Si se corta a mitad (cerrar el navegador, perder la conexión), al volver contin
 
 - **Google** (opcional): pon `GOOGLE_CLIENT_ID` en `.env` (ver `.env.example`) y reconstruye con `docker compose up --build`. Sin él, el botón no aparece.
 - **Recuperar contraseña**: por defecto el correo no se envía, se escribe en `docker compose logs backend` (copia ahí el enlace). Para enviarlo de verdad, configura `EMAIL_*`.
-- Una cuenta creada antes de existir los perfiles (p. ej. con `createsuperuser`) entra con su usuario y contraseña de siempre. Para poder recuperar la contraseña necesita un correo: agrégalo en `/admin`.
+- Una cuenta creada por consola (`createsuperuser`) puede no tener correo y entra igual con su usuario y contraseña. Para poder
+  recuperar la contraseña necesita uno: agrégalo en `/admin`.

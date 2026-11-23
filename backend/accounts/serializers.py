@@ -1,12 +1,9 @@
 import re
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from .models import Profile
-
-User = get_user_model()
+from .models import User
 
 USERNAME_RE = re.compile(r'^[\w.-]+$')
 
@@ -16,12 +13,10 @@ def normalize_email(email):
 
 
 def email_taken(email, exclude_user=None):
-    key = normalize_email(email)
-    qs = Profile.objects.filter(email_key=key)
-    legacy = User.objects.filter(email__iexact=key)  # cuentas anteriores a los perfiles
+    qs = User.objects.filter(email=normalize_email(email))  # el correo se guarda siempre en minúsculas
     if exclude_user is not None:
-        qs, legacy = qs.exclude(user=exclude_user), legacy.exclude(pk=exclude_user.pk)
-    return qs.exists() or legacy.exists()
+        qs = qs.exclude(pk=exclude_user.pk)
+    return qs.exists()
 
 
 class RegisterSerializer(serializers.Serializer):

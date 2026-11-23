@@ -2,7 +2,6 @@ import re
 from datetime import timedelta
 from unittest import mock
 
-from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.cache import cache
 from django.test import override_settings
@@ -10,10 +9,8 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from timer.models import Solve
+from .models import AuthToken, GoogleIdentity, User, hash_key
 
-from .models import AuthToken, GoogleIdentity, Profile, hash_key
-
-User = get_user_model()
 GOOD = 'una-clave-larga-9137'
 
 
@@ -31,9 +28,7 @@ class BaseCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
 
     def make_user(self, username='ana', email='ana@example.com', password=GOOD):
-        user = User.objects.create_user(username, email, password)
-        Profile.objects.create(user=user, email_key=email.lower())
-        return user
+        return User.objects.create_user(username, email, password)
 
 
 class RegistrationTests(BaseCase):
@@ -80,7 +75,7 @@ class RegistrationTests(BaseCase):
 
     def test_el_correo_se_guarda_normalizado(self):
         self.register(email='  Ana@Example.COM ')
-        self.assertEqual(Profile.objects.get().email_key, 'ana@example.com')
+        self.assertEqual(User.objects.get().email, 'ana@example.com')
 
 
 class SessionTests(BaseCase):
@@ -129,6 +124,30 @@ class SessionTests(BaseCase):
         codigos = [self.login('ana', 'mala').status_code for _ in range(33)]
         self.assertIn(429, codigos)
         self.assertEqual(codigos[0], 400)
+
+
+class ConsoleAccountTests(BaseCase):
+    """Cuentas creadas por consola (createsuperuser), que pueden no tener correo: deben funcionar igual que las demás."""
+
+    def test_un_administrador_sin_correo_entra_con_su_usuario_y_contrasena(self):
+        User.objects.create_superuser('john', '', 'clave-de-john-2024')
+        r = self.login('john', 'clave-de-john-2024')
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.json()['user']['display_name'], 'john', 'sin nombre visible se muestra el usuario')
+        self.bearer(r.json()['token'])
+        self.assertEqual(self.client.get('/api/sync/').status_code, 200)
+
+    def test_el_correo_de_una_cuenta_cuenta_para_la_unicidad_y_para_entrar(self):
+        User.objects.create_user('john', 'John@Example.com', 'clave-de-john-2024')
+        self.assertEqual(self.login('john@example.com', 'clave-de-john-2024').status_code, 200)
+        r = self.register(username='otro', email='JOHN@example.com')
+        self.assertEqual(r.status_code, 400)
+        self.assertIn('email', r.json())
+
+    def test_una_cuenta_con_correo_puede_recuperar_su_contrasena(self):
+        User.objects.create_user('john', 'john@example.com', 'clave-de-john-2024')
+        self.client.post('/api/auth/password-reset/', {'email': 'john@example.com'}, format='json')
+        self.assertEqual(len(mail.outbox), 1)
 
 
 class ProfileTests(BaseCase):

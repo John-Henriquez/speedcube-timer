@@ -30,13 +30,13 @@ def attempt_payload(**overrides):
 
 class AttemptSyncTests(ApiTestCase):
     def test_subir_y_bajar(self):
-        attempt = attempt_payload(validation='valida', stage_marks={'cross': 5200})
+        attempt = attempt_payload(validation='valida')
         self.assertEqual(self.push(attempts=[attempt]).json()['attempts'], 1)
         data = self.client.get('/api/sync/').json()
         self.assertEqual(len(data['attempts']), 1)
         self.assertEqual(data['attempts'][0]['id'], attempt['id'])
-        self.assertEqual(data['attempts'][0]['stage_marks'], {'cross': 5200})
-        self.assertIsNone(data['attempts'][0]['moves'])  # lo no medido no se inventa
+        self.assertIsNone(data['attempts'][0]['recognition_ms'])  # lo no medido no se inventa
+        self.assertEqual(data['attempts'][0]['marks'], [])
 
     def test_idempotente_y_actualiza(self):
         attempt = attempt_payload()
@@ -85,14 +85,15 @@ class AttemptAlgorithmTests(ApiTestCase):
         attempt = attempt_payload(zone='oll', case_id='oll-27', algorithm_id='oll-27#1', algorithm_notation="R U R' U R U2 R'")
         self.push(attempts=[attempt])
         row = Attempt.objects.get(pk=attempt['id'])
-        self.assertEqual(row.algorithm_id, 'oll-27#1')
+        self.assertEqual(row.algorithm_ref, 'oll-27#1')
         self.assertEqual(row.algorithm_notation, "R U R' U R U2 R'")
         data = self.client.get('/api/sync/').json()['attempts'][0]
         self.assertEqual(data['algorithm_notation'], "R U R' U R U2 R'")
 
     def test_el_algoritmo_es_opcional(self):
         self.assertEqual(self.push(attempts=[attempt_payload()]).status_code, 200)
-        self.assertIsNone(Attempt.objects.get().algorithm_id)
+        self.assertIsNone(Attempt.objects.get().algorithm_ref)
+        self.assertIsNone(Attempt.objects.get().algorithm_notation, 'sin algoritmo: NULL, no cadena vacía')
 
     def test_reenviar_el_intento_no_cambia_el_algoritmo_guardado(self):
         attempt = attempt_payload(algorithm_id='pll-ua#2', algorithm_notation="M2 U M U2 M' U M2")

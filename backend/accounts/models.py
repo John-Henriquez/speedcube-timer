@@ -3,28 +3,57 @@ import secrets
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q
+from django.db.models.functions import Lower
 from django.utils import timezone
 
 
-class Profile(models.Model):
-    """Datos de perfil de una cuenta. Todo usuario autenticado tiene (o obtiene al usarla) uno."""
+class User(AbstractUser):
+    """
+    Cuenta de usuario. Es el modelo de usuario del proyecto (AUTH_USER_MODEL).
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
-    display_name = models.CharField(max_length=60, blank=True)
-    # Correo en minúsculas: garantiza una sola cuenta por correo (sin importar mayúsculas).
-    email_key = models.CharField(max_length=254, null=True, blank=True, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    Un administrador es una cuenta normal con `is_staff` / `is_superuser`: no hay roles propios.
+    Lo que antes vivía en una tabla `Profile` (nombre visible y correo normalizado) es ahora parte del usuario, y la
+    unicidad de usuario y correo la garantiza la base de datos, no solo la validación.
+    """
 
-    def __str__(self):
-        return f'Perfil de {self.user.username}'
+    first_name = None  # no se usan: el nombre que se muestra es `display_name`
+    last_name = None
+    email = models.EmailField(max_length=254, blank=True)  # vacío = sin correo (p. ej. un admin creado por consola)
+    display_name = models.CharField(max_length=60, blank=True)  # vacío = se muestra el usuario
+
+    class Meta(AbstractUser.Meta):
+        constraints = [
+            # "Ana" y "ana" son el mismo usuario.
+            models.UniqueConstraint(Lower('username'), name='accounts_user_username_ci_uniq'),
+            # Un correo, una cuenta. Los correos vacíos no cuentan (puede haber varias cuentas sin correo).
+            models.UniqueConstraint(fields=['email'], condition=~Q(email=''), name='accounts_user_email_uniq'),
+            # El correo se guarda siempre en minúsculas, así la unicidad no depende de mayúsculas.
+            models.CheckConstraint(condition=Q(email=Lower('email')), name='accounts_user_email_lowercase'),
+        ]
+
+    def clean(self):
+        # Se normaliza también aquí porque la validación de restricciones (formularios, admin) corre ANTES de save().
+        super().clean()
+        self.email = (self.email or '').strip().lower()
+
+    def save(self, *args, **kwargs):
+        self.email = (self.email or '').strip().lower()
+        super().save(*args, **kwargs)
+
+    @property
+    def shown_name(self):
+        return self.display_name or self.username
 
 
 class GoogleIdentity(models.Model):
-    """Vínculo entre una cuenta y una identidad de Google (`sub` es el identificador estable de Google)."""
+    """La cuenta de Google vinculada a un usuario (como máximo una). `sub` es el identificador estable de Google."""
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='google_identities')
-    sub = models.CharField(max_length=64, unique=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='google_identity')
+    sub = models.CharField(max_length=255, unique=True)  # Google garantiza hasta 255 caracteres
+    # Correo de la cuenta de Google al vincular: puede diferir del correo de la cuenta, y sirve para saber cuál es.
     email = models.EmailField(blank=True)
     linked_at = models.DateTimeField(auto_now_add=True)
 
@@ -35,9 +64,9 @@ def hash_key(key):
 
 class AuthToken(models.Model):
     """
-    Sesión de un dispositivo. A diferencia del token estándar de DRF (uno por usuario), cada inicio
-    de sesión crea el suyo, así que cerrar sesión en un dispositivo no cierra las demás. Solo se guarda
-    el hash: si la base de datos se filtrara, los tokens no se podrían usar.
+    Sesión de un dispositivo. A diferencia del token estándar de DRF (uno por usuario), cada inicio de sesión crea el
+    suyo, así que cerrar sesión en un dispositivo no cierra las demás. Solo se guarda el hash: si la base de datos se
+    filtrara, los tokens no se podrían usar.
     """
 
     key_hash = models.CharField(max_length=64, unique=True)

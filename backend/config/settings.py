@@ -34,11 +34,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
     'corsheaders',
     'timer',
     'accounts',
 ]
+
+AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -137,3 +138,6 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', '0') == '1'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Speedcube Timer <no-reply@localhost>')
+
+# Segundos que se solapan las consultas incrementales de /api/sync/ (evita perder escrituras que se confirman fuera de orden).
+SYNC_CURSOR_OVERLAP_SECONDS = int(os.environ.get('SYNC_CURSOR_OVERLAP_SECONDS', '5'))

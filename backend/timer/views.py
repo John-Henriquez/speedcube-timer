@@ -1,6 +1,7 @@
-from datetime import timezone as dt_timezone
+from datetime import timedelta, timezone as dt_timezone
 
-from django.db import transaction
+from django.conf import settings
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -50,22 +51,38 @@ def _apply(model, serializer_class, items, request):
             continue
         data = dict(serializer.validated_data)
         pk = data.pop('id')
+        marks = data.pop('marks', None)
         obj = model.objects.filter(pk=pk).first()
         if obj is None:
             obj = model(pk=pk, user=request.user)
         elif obj.user_id != request.user.id:
             rejected[str(pk)] = {'id': ['Este identificador pertenece a otra cuenta.']}
             continue
-        incoming = data.get('client_updated_at')
-        current = getattr(obj, 'client_updated_at', None)
-        if not obj._state.adding and incoming and current and incoming < current:
+        incoming = data.get('client_updated_at') or timezone.now()  # sin hora de edición: la de recepción
+        data['client_updated_at'] = incoming
+        if not obj._state.adding and incoming < obj.client_updated_at:
             stale.append(str(pk))
             continue
         for field, value in data.items():
             setattr(obj, field, value)
-        obj.save()  # updated_at se renueva solo
+        try:
+            with transaction.atomic():  # punto de guardado: si la base de datos rechaza este registro, los demás siguen
+                obj.save()  # updated_at se renueva solo
+                if marks is not None:
+                    _replace_marks(obj, marks)
+        except IntegrityError:
+            rejected[str(pk)] = {'non_field_errors': ['El registro incumple una restricción de la base de datos.']}
+            continue
         accepted.append(str(pk))
     return accepted, stale, rejected
+
+
+def _replace_marks(obj, marks):
+    """Las marcas viajan con su resolución o intento y se reemplazan en bloque (reenviar lo mismo no duplica)."""
+    model, fk = obj.marks.model, obj.marks.field.name
+    obj.marks.all().delete()
+    model.objects.bulk_create([model(**{fk: obj}, stage=m['stage'], elapsed_ms=m['elapsed_ms']) for m in marks])
+
 
 class SyncView(APIView):
     """
@@ -84,8 +101,8 @@ class SyncView(APIView):
     def get(self, request):
         server_time = timezone.now()  # se toma antes de consultar, para no perder cambios
         sessions = Session.objects.filter(user=request.user)
-        solves = Solve.objects.filter(user=request.user)
-        attempts = Attempt.objects.filter(user=request.user)
+        solves = Solve.objects.filter(user=request.user).prefetch_related('marks')
+        attempts = Attempt.objects.filter(user=request.user).prefetch_related('marks')
 
         raw = request.query_params.get('since')
         if raw:
@@ -94,6 +111,9 @@ class SyncView(APIView):
                 raise ParseError('"since" debe ser una fecha ISO 8601.')
             if timezone.is_naive(since):
                 since = since.replace(tzinfo=dt_timezone.utc)
+            # Solapamiento: una escritura puede confirmarse un instante después de que otra, más reciente, ya fue leída.
+            # Pedir un poco antes lo recupera; reenviar un registro ya recibido es inocuo (el guardado es idempotente).
+            since -= timedelta(seconds=settings.SYNC_CURSOR_OVERLAP_SECONDS)
             sessions = sessions.filter(updated_at__gt=since)
             solves = solves.filter(updated_at__gt=since)
             attempts = attempts.filter(updated_at__gt=since)

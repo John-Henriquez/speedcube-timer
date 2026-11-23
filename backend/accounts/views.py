@@ -2,7 +2,6 @@ import logging
 import re
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -17,35 +16,22 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from . import google
-from .models import AuthToken, GoogleIdentity, Profile
+from .models import AuthToken, GoogleIdentity, User
 from .serializers import (
     GoogleCredentialSerializer, LoginSerializer, PasswordChangeSerializer, PasswordResetConfirmSerializer,
     PasswordResetRequestSerializer, ProfileUpdateSerializer, RegisterSerializer, email_taken, normalize_email,
 )
 
-User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-def ensure_profile(user):
-    """Las cuentas creadas antes de existir los perfiles (p. ej. con createsuperuser) obtienen el suyo al usarlas."""
-    profile, created = Profile.objects.get_or_create(user=user)
-    if created and user.email:
-        key = normalize_email(user.email)
-        if not Profile.objects.filter(email_key=key).exists():
-            profile.email_key = key
-            profile.save(update_fields=['email_key'])
-    return profile
-
-
 def user_payload(user):
-    profile = ensure_profile(user)
-    providers = (['password'] if user.has_usable_password() else []) + (['google'] if user.google_identities.exists() else [])
+    providers = (['password'] if user.has_usable_password() else []) + (['google'] if hasattr(user, 'google_identity') else [])
     return {
         'id': user.id,
         'username': user.username,
         'email': user.email,
-        'display_name': profile.display_name or user.username,
+        'display_name': user.shown_name,
         'providers': providers,
         'date_joined': user.date_joined,
     }
@@ -71,9 +57,9 @@ class RegisterView(PublicView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         try:
-            with transaction.atomic():
-                user = User.objects.create_user(username=data['username'], email=data['email'], password=data['password'])
-                Profile.objects.create(user=user, display_name=data.get('display_name') or data['username'], email_key=data['email'])
+            user = User.objects.create_user(
+                username=data['username'], email=data['email'], password=data['password'], display_name=data.get('display_name', ''),
+            )
         except IntegrityError:  # otra petición ganó la carrera por el mismo usuario o correo
             return Response({'detail': 'El usuario o el correo ya están en uso.', 'code': 'taken'}, status=status.HTTP_400_BAD_REQUEST)
         return session_response(request, user, status.HTTP_201_CREATED)
@@ -83,9 +69,7 @@ def find_user(identifier):
     identifier = identifier.strip()
     user = User.objects.filter(username__iexact=identifier).first()
     if user is None and '@' in identifier:
-        key = normalize_email(identifier)
-        profile = Profile.objects.filter(email_key=key).select_related('user').first()
-        user = profile.user if profile else User.objects.filter(email__iexact=key).first()
+        user = User.objects.filter(email=normalize_email(identifier)).first()
     return user
 
 
@@ -115,9 +99,8 @@ class MeView(APIView):
     def patch(self, request):
         serializer = ProfileUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        profile = ensure_profile(request.user)
-        profile.display_name = serializer.validated_data['display_name'].strip()
-        profile.save(update_fields=['display_name'])
+        request.user.display_name = serializer.validated_data['display_name'].strip()
+        request.user.save(update_fields=['display_name'])
         return Response(user_payload(request.user))
 
 
@@ -224,8 +207,7 @@ class GoogleLoginView(PublicView):
             )
         try:
             with transaction.atomic():
-                user = User.objects.create_user(username=free_username(email), email=email)  # sin contraseña usable
-                Profile.objects.create(user=user, display_name=str(info.get('name') or user.username)[:60], email_key=email)
+                user = User.objects.create_user(username=free_username(email), email=email, display_name=str(info.get('name') or '')[:60])  # sin contraseña usable
                 GoogleIdentity.objects.create(user=user, sub=sub, email=email)
         except IntegrityError:
             return Response({'detail': 'No se pudo crear la cuenta. Inténtalo de nuevo.', 'code': 'conflict'}, status=status.HTTP_409_CONFLICT)
@@ -238,17 +220,19 @@ class GoogleLinkView(APIView):
         if error:
             return error
         sub = str(info['sub'])
-        existing = GoogleIdentity.objects.filter(sub=sub).first()
-        if existing and existing.user_id != request.user.id:
+        if GoogleIdentity.objects.filter(sub=sub).exclude(user=request.user).exists():
             return Response({'detail': 'Esa cuenta de Google ya está vinculada a otro usuario.', 'code': 'google_taken'}, status=status.HTTP_409_CONFLICT)
-        if not existing:
+        current = GoogleIdentity.objects.filter(user=request.user).first()
+        if current and current.sub != sub:
+            return Response({'detail': 'Esta cuenta ya tiene otra cuenta de Google vinculada. Desvincúlala primero.', 'code': 'google_already_linked'}, status=status.HTTP_409_CONFLICT)
+        if not current:
             GoogleIdentity.objects.create(user=request.user, sub=sub, email=normalize_email(info['email']))
-        return Response(user_payload(request.user))
+        return Response(user_payload(User.objects.get(pk=request.user.pk)))
 
 
 class GoogleUnlinkView(APIView):
     def post(self, request):
         if not request.user.has_usable_password():
             return Response({'detail': 'Define una contraseña antes de desvincular Google, o perderías el acceso.', 'code': 'password_required'}, status=status.HTTP_400_BAD_REQUEST)
-        request.user.google_identities.all().delete()
-        return Response(user_payload(request.user))
+        GoogleIdentity.objects.filter(user=request.user).delete()
+        return Response(user_payload(User.objects.get(pk=request.user.pk)))

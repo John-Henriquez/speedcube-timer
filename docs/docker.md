@@ -58,6 +58,25 @@ Las migraciones se aplican solas al iniciar el backend (`migrate --noinput`): so
 reinician datos. Si una migración fallara, el backend no arranca y el error se ve con `docker compose logs backend`.
 También se pueden ejecutar a mano: `docker compose run --rm backend python manage.py migrate`.
 
+### Reconstruir la base desde cero
+
+Hace falta tras la **versión 0.11.0** (cambió el modelo de usuario y se reorganizaron las tablas, y una base anterior no se puede
+actualizar en sitio) y sirve cuando quieras empezar limpio. **Borra todos los datos**; si algo importa, haz antes la copia de
+seguridad de abajo.
+
+```powershell
+docker compose down -v                  # detiene todo y BORRA el volumen con la base de datos
+docker compose up --build               # reconstruye desde las migraciones: base nueva y vacía
+docker compose exec backend python manage.py createsuperuser    # el administrador, de nuevo
+```
+
+Si ejecutas la 0.11.0 sobre una base anterior sin reconstruirla, el backend no arranca y los registros
+(`docker compose logs backend`) explican exactamente esto. Después vuelve a registrarte en la app. Los datos que haya en el
+navegador (como invitado) se migran a la cuenta nueva.
+
+Para dejar la base vacía **sin** reconstruirla (conserva el esquema y borra todos los datos, incluidas las cuentas):
+`docker compose exec backend python manage.py flush --noinput`, y luego `createsuperuser`.
+
 ### Copia de seguridad y restauración
 
 Antes de cambios grandes conviene hacer una copia (con la aplicación en marcha):

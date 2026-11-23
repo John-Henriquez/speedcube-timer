@@ -4,6 +4,21 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
+## [0.11.0] - 2026-11-22
+
+### Añadido
+- Soporte de inspección (`inspection_ms`) y de marcas de etapa (`marks`) en resoluciones e intentos (backend)
+- Guía `docs/modelo-de-datos.md` y procedimiento para reconstruir la base en `docs/docker.md` (docs)
+
+### Cambiado
+- Modelo de usuario propio con correo y usuario únicos garantizados por la base; `Profile` se integra en `User` (backend)
+- Integridad en PostgreSQL: `CHECK`, `UNIQUE` y clave compuesta que impide asociar una resolución a la sesión de otra cuenta (backend)
+- `ended_at` e `inspection_ms` unifican `solved_at`/`attempted_at` y `recognition_ms` en el esquema; la API conserva los nombres anteriores (backend)
+- Las migraciones de `accounts` y `timer` se reinician: una base anterior debe reconstruirse (backend)
+
+### Eliminado
+- `Profile`, la tabla `authtoken_token`, `first_name`/`last_name`, `Session.puzzle`, `created_at` y los campos `moves` y `stage_marks` (backend)
+
 ### Añadido
 - Referencia de la API en `docs/api.md`, con el contrato de sincronización (docs)
 

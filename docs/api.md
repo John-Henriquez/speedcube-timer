@@ -3,7 +3,8 @@
 Base: `http://localhost:8000/api/`. Todo es JSON. Las rutas que piden sesión llevan el encabezado
 `Authorization: Token <token>`; el token se obtiene al registrarse o iniciar sesión (no es el token estándar de DRF).
 
-Los campos exactos de resoluciones e intentos están en `backend/timer/serializers.py`; aquí solo se describe el contrato.
+Los campos exactos de resoluciones e intentos están en `backend/timer/serializers.py`; aquí se describe el contrato. El esquema de la
+base de datos se explica en [modelo-de-datos.md](modelo-de-datos.md).
 
 ## Estado
 
@@ -27,13 +28,16 @@ Los campos exactos de resoluciones e intentos están en `backend/timer/serialize
 | POST | `google/unlink/` | sí | Desvincula Google (exige tener contraseña) |
 
 Errores habituales: `400` validación (con el detalle por campo) o `invalid_credentials`; `401` sin sesión o sesión caducada;
-`409 link_required` (Google: ya existe una cuenta con ese correo, hay que vincular desde el perfil) o `google_taken`;
-`429` demasiados intentos; `501 google_not_configured`; `503 google_unavailable`.
+`409 link_required` (Google: ya existe una cuenta con ese correo, hay que vincular desde el perfil), `google_taken` o
+`google_already_linked` (la cuenta ya tiene otra cuenta de Google vinculada);
+ `429` demasiados intentos; `501 google_not_configured`; `503 google_unavailable`.
 
 ## Sincronización (`/api/sync/`, exige sesión)
 
 **GET** `?since=<fecha ISO 8601>`: lo creado, modificado o borrado desde esa fecha, solo de la cuenta autenticada. Sin
-`since`, devuelve todo. La respuesta trae `server_time`: se guarda y se usa como `since` la próxima vez.
+`since`, devuelve todo. La respuesta trae `server_time`: se guarda y se usa como `since` la próxima vez. El servidor solapa la
+consulta unos segundos (`SYNC_CURSOR_OVERLAP_SECONDS`, 5 por defecto; 0 la desactiva) para no perder una escritura que se confirma
+fuera de orden: puede devolver registros ya recibidos, y es inocuo reaplicarlos.
 
 **POST** `{"sessions": [...], "solves": [...], "attempts": [...]}` (hasta 500 elementos de cada tipo): sube cambios en
 lote. **Cada elemento se procesa por separado** y la respuesta dice, por identificador, qué pasó:
@@ -49,5 +53,20 @@ como conteos, `sessions`, `solves` y `attempts` (cuántos se aceptaron).
 
 - El dueño de cada registro siempre es la cuenta autenticada: un `user` enviado en el cuerpo se ignora y un identificador
   de otra cuenta se rechaza.
+- Si la base de datos rechaza un registro, queda en `rejected` y el resto del envío se guarda.
 - Los borrados son lógicos (`deleted_at`) para que los demás dispositivos se enteren.
 - Los identificadores los genera el cliente (UUID), lo que hace idempotente el envío.
+
+### Resoluciones e intentos
+
+Campos opcionales de la 0.11.0 (el cliente actual no los envía):
+
+| Campo | En | Significado |
+|---|---|---|
+| `inspection_ms` | resolución | Duración de la inspección en ms; `null` si no se midió. En los intentos, el mismo dato se llama `recognition_ms` |
+| `marks` | resolución e intento | `[{"stage": "cross", "elapsed_ms": 4100}, ...]`: fin de cada etapa, en ms **desde el inicio de la ejecución**. Si falta el campo, las marcas existentes no se tocan; si viene (aunque vacío), reemplaza el conjunto |
+| `client_updated_at` | ambos | Hora de la última edición en el dispositivo. Si falta, se usa la de recepción |
+
+Tiempos, inspección y marcas son enteros en milisegundos entre 0 y 10 horas; `elapsed_ms` no puede superar `time_ms`, y una etapa
+no puede repetirse. `solved_at` y `attempted_at` son el instante en que **terminó** la ejecución. `moves` y `stage_marks` ya no se
+guardan: se aceptan vacíos (`null`) y se rechazan con contenido. `created_at` ya no se devuelve.

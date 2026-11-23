@@ -48,7 +48,6 @@ PLL), registrar cada intento y ver el progreso por zona y por caso, con la base 
 
 **Planificado** (no implementado)
 
-- Versión 0.11.0: refactor estructural (alcance por definir).
 - Separación avanzada de rutas y permisos.
 - Post-it avanzado, refactor visual, entrenador adaptativo, dominio dinámico, Slow Turning e informes.
 - Premium, pagos y restricciones por niveles: aplazados; no existe nada de esto.
@@ -59,7 +58,7 @@ PLL), registrar cada intento y ver el progreso por zona y por caso, con la base 
 |---|---|
 | Frontend | React 18, Vite 5, IndexedDB; fuentes locales con `@fontsource` |
 | Backend | Python 3.12, Django 5, Django REST Framework 3, django-cors-headers, psycopg 3, google-auth |
-| Base de datos | PostgreSQL 16 (SQLite solo para desarrollar sin Docker) |
+| Base de datos | PostgreSQL 16 (se requiere 15 o superior; SQLite solo para desarrollar sin Docker) |
 | Infraestructura | Docker Compose; el frontend compilado se sirve con nginx |
 | Pruebas | `node:test` + `fake-indexeddb` (frontend); pruebas de Django (backend) |
 
@@ -96,8 +95,8 @@ speedcube-timer/
 │       └── testing/          # servidor simulado para las pruebas (no entra en el build)
 ├── backend/                  # API (Django + DRF)
 │   ├── config/               # ajustes y rutas
-│   ├── accounts/             # usuarios, sesiones por dispositivo, Google, recuperación de contraseña
-│   └── timer/                # resoluciones, intentos, sesiones y /api/sync/
+│   ├── accounts/             # el usuario propio, sesiones por dispositivo, Google, recuperación de contraseña
+│   └── timer/                # resoluciones, intentos, sesiones, marcas de etapa y /api/sync/
 ├── docs/                     # guías especializadas (ver "Documentación")
 ├── docker-compose.yml
 ├── .env.example
@@ -199,9 +198,10 @@ almacenamiento con la interfaz. Las zonas de entrenamiento se definen en `traini
 
 ## Backend
 
-Dos apps de Django: `accounts` (registro, sesiones por dispositivo, Google, recuperación de contraseña, perfil) y `timer`
-(resoluciones, intentos, sesiones y la sincronización). Referencia de rutas y del contrato de sincronización:
-[docs/api.md](docs/api.md).
+Dos apps de Django: `accounts` (el usuario propio del proyecto, sesiones por dispositivo, Google, recuperación de contraseña) y
+`timer` (resoluciones, intentos, sesiones, marcas de etapa y la sincronización). La integridad se garantiza en la base de datos,
+no solo en la API: el esquema y sus decisiones están en [docs/modelo-de-datos.md](docs/modelo-de-datos.md) y las rutas, junto con el
+contrato de sincronización, en [docs/api.md](docs/api.md).
 
 ## Cuentas y funcionamiento offline
 
@@ -226,7 +226,6 @@ dirección parecería perder los datos. Todo el detalle, incluido qué se envía
   "Sin publicar".
 - Para publicar una versión: `npm version X.Y.Z --no-git-tag-version` en `frontend/`, cambiar el encabezado "Sin publicar"
   del CHANGELOG, commit `chore(release)`, etiqueta anotada `vX.Y.Z` y `git push --follow-tags`.
-- Siguiente hito: 0.11.0 (refactor estructural).
 
 ## Para contribuir o continuar
 
@@ -239,7 +238,9 @@ dirección parecería perder los datos. Todo el detalle, incluido qué se envía
 - El contrato de `/api/sync/` lo consumen el motor de sincronización y sus pruebas: cambiarlo exige tocar ambos lados.
 - No modifiques `core/cube/` ni `catalog/` sin ejecutar las pruebas: verifican los algoritmos del almanaque con el
   simulador.
-- No edites migraciones ya aplicadas; comprueba con `makemigrations --check`.
+- No edites migraciones ya aplicadas; comprueba con `makemigrations --check`. La 0.11.0 reinició las migraciones (ver
+  [docs/modelo-de-datos.md](docs/modelo-de-datos.md#migraciones)): una base anterior hay que reconstruirla
+  ([docs/docker.md](docs/docker.md#reconstruir-la-base-desde-cero)).
 - Hay un único README, este. Lo extenso va a `docs/`; no crees README secundarios.
 
 ## Documentación
@@ -248,5 +249,6 @@ dirección parecería perder los datos. Todo el detalle, incluido qué se envía
 |---|---|
 | [docs/docker.md](docs/docker.md) | Docker en detalle: datos y volumen, copia de seguridad, uso desde el celular, problemas frecuentes |
 | [docs/cuentas.md](docs/cuentas.md) | Cuentas, qué va a la base y qué es local, migración, cierre de sesión, seguridad, Google y correo |
+| [docs/modelo-de-datos.md](docs/modelo-de-datos.md) | Esquema de la base de datos: entidades, semántica temporal, restricciones, índices y decisiones |
 | [docs/api.md](docs/api.md) | Rutas de la API y contrato de sincronización |
 | [CHANGELOG.md](CHANGELOG.md) | Historial de versiones |
