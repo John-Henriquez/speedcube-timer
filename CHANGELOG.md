@@ -4,6 +4,8 @@ Todos los cambios relevantes de este proyecto se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y versionado según [SemVer](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
 ## [0.11.0] - 2026-11-22
 
 ### Añadido
